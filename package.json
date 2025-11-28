@@ -1,0 +1,22 @@
+{
+  "name": "jornada-aurora",
+  "version": "1.0.0",
+  "description": "Uma jornada mágica que conecta Harry Potter e Catolicismo",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": ["harry-potter", "game", "interactive"],
+  "author": "George",
+  "license": "ISC",
+  "dependencies": {
+    "three": "^0.160.0",
+    "gsap": "^3.12.0",
+    "howler": "^2.2.4"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

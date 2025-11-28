@@ -1,0 +1,411 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+/* ===========================
+   RESET & BASE
+   =========================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Crimson Text', serif;
+    background: #000;
+    color: #fff;
+}
+
+/* ===========================
+   CANVAS THREE.JS
+   =========================== */
+
+#three-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* ===========================
+   UI OVERLAY
+   =========================== */
+
+#ui-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+}
+
+#ui-overlay > * {
+    pointer-events: auto;
+}
+
+/* ===========================
+   SCREENS
+   =========================== */
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.screen.active {
+    display: flex;
+}
+
+/* ===========================
+   LOADING SCREEN
+   =========================== */
+
+#loading-screen {
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.loading-content {
+    text-align: center;
+    max-width: 400px;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 1.5rem;
+    border: 4px solid rgba(255, 215, 0, 0.2);
+    border-top: 4px solid #ffd700;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+    color: #ffd700;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.loading-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.loading-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #ffd700, #ffed4e);
+    width: 0%;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px #ffd700;
+}
+
+/* ===========================
+   GAME CONTAINER
+   =========================== */
+
+#game-container {
+    pointer-events: none;
+}
+
+#game-container > * {
+    pointer-events: auto;
+}
+
+/* ===========================
+   TEXT BOX
+   =========================== */
+
+#text-box {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 800px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid #ffd700;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#text-box:not(.hidden) {
+    opacity: 1;
+}
+
+.text-box-content {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #f0f0f0;
+}
+
+#text-content {
+    margin-bottom: 1rem;
+}
+
+#text-verse {
+    display: block;
+    font-style: italic;
+    color: #ffd700;
+    font-size: 1rem;
+    margin-top: 1rem;
+    text-align: right;
+}
+
+#text-verse.hidden {
+    display: none;
+}
+
+/* ===========================
+   MODALS
+   =========================== */
+
+.modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
+    border: 3px solid #ffd700;
+    border-radius: 15px;
+    padding: 3rem;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+}
+
+.modal-content h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 2rem;
+    color: #ffd700;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.5rem;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid #ffd700;
+    border-radius: 8px;
+    color: #ffd700;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+}
+
+.modal-content input:focus {
+    outline: none;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+.modal-content button {
+    padding: 1rem 3rem;
+    font-size: 1.2rem;
+    font-family: 'Cinzel', serif;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #1a1a2e;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-weight: 600;
+}
+
+.modal-content button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.5);
+}
+
+.modal-content button:active {
+    transform: translateY(0);
+}
+
+.error-message {
+    color: #ff4444;
+    margin-top: 1rem;
+    font-size: 1rem;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.error-message.hidden {
+    opacity: 0;
+    height: 0;
+    margin: 0;
+}
+
+/* ===========================
+   PROGRESS UI
+   =========================== */
+
+#progress-ui {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #ffd700;
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+}
+
+.phase-info {
+    font-family: 'Cinzel', serif;
+    color: #ffd700;
+}
+
+#phase-name {
+    font-size: 1.2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.phase-stars {
+    font-size: 1.5rem;
+}
+
+/* ===========================
+   UTILITIES
+   =========================== */
+
+.hidden {
+    display: none !important;
+}
+
+/* ===========================
+   TRANSITION OVERLAY
+   =========================== */
+
+#transition-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 100;
+}
+
+/* ===========================
+   ERROR SCREEN
+   =========================== */
+
+.error-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #1a1a2e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    text-align: center;
+    padding: 2rem;
+}
+
+.error-screen h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 3rem;
+    color: #ff4444;
+    margin-bottom: 1rem;
+}
+
+.error-screen p {
+    font-size: 1.2rem;
+    color: #ccc;
+    margin-bottom: 2rem;
+    max-width: 600px;
+}
+
+.error-screen button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    background: #ffd700;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+
+@media (max-width: 768px) {
+    #text-box {
+        width: 90%;
+        padding: 1.5rem;
+    }
+
+    .text-box-content {
+        font-size: 1rem;
+    }
+
+    #progress-ui {
+        top: 1rem;
+        left: 1rem;
+        padding: 0.75rem 1rem;
+    }
+
+    #phase-name {
+        font-size: 1rem;
+    }
+
+    .modal-content {
+        padding: 2rem;
+    }
+
+    .modal-content h2 {
+        font-size: 1.5rem;
+    }
+}

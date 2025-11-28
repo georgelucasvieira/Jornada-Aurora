@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jornada Aurora - Uma Aventura Mágica</title>
+    <link rel="stylesheet" href="/styles/main.css">
+    <link rel="stylesheet" href="/styles/phases.css">
+    <link rel="stylesheet" href="/styles/animations.css">
+</head>
+<body>
+    <!-- Canvas principal para Three.js -->
+    <canvas id="three-canvas"></canvas>
+
+    <!-- Overlay para UI 2D -->
+    <div id="ui-overlay">
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="screen active">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Carregando a magia...</p>
+                <div class="loading-bar">
+                    <div class="loading-progress" id="loading-progress"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Game Container -->
+        <div id="game-container" class="screen">
+            <!-- Text Box para narrativas e diálogos -->
+            <div id="text-box" class="hidden">
+                <div class="text-box-content">
+                    <p id="text-content"></p>
+                    <cite id="text-verse" class="hidden"></cite>
+                </div>
+            </div>
+
+            <!-- Input para códigos de cartas -->
+            <div id="card-input-modal" class="modal hidden">
+                <div class="modal-content">
+                    <h2>Insira o código da carta de Edwiges</h2>
+                    <input
+                        type="text"
+                        id="card-code-input"
+                        placeholder="Digite o código..."
+                        maxlength="6"
+                    >
+                    <button id="card-submit-btn">Confirmar</button>
+                    <p id="card-error" class="error-message hidden"></p>
+                </div>
+            </div>
+
+            <!-- Progress UI -->
+            <div id="progress-ui">
+                <div class="phase-info">
+                    <span id="phase-name">Fase 0</span>
+                    <div class="phase-stars" id="phase-stars"></div>
+                </div>
+            </div>
+
+            <!-- Interactive Elements Container -->
+            <div id="interactive-container"></div>
+        </div>
+
+        <!-- Fade Transition Overlay -->
+        <div id="transition-overlay"></div>
+    </div>
+
+    <!-- Main Script (ES Module) -->
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>
