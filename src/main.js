@@ -65,24 +65,47 @@ class Game {
         // Atualizar barra de progresso
         this.updateLoadingProgress(0);
 
-        // Simulação de carregamento (por enquanto sem assets reais)
-        const steps = 5;
-        for (let i = 1; i <= steps; i++) {
-            await this.delay(200);
-            this.updateLoadingProgress((i / steps) * 100);
+        const totalSteps = 2; // Modelos 3D + Áudios
+        let currentStep = 0;
+
+        // 1. Pré-carregar modelo do Chapéu Seletor
+        try {
+            console.log('Carregando modelo 3D do Chapéu Seletor...');
+            await this.scene.addModel('/assets/models/sorting-hat.glb', {
+                position: [9999, 9999, 9999] // Posição fora da tela para pré-cache
+            });
+            console.log('✓ Modelo do chapéu carregado e em cache');
+
+            // Remover do cache visual (será adicionado novamente na fase 0)
+            this.scene.clear();
+
+            currentStep++;
+            this.updateLoadingProgress((currentStep / totalSteps) * 100);
+        } catch (error) {
+            console.warn('Modelo sorting-hat.glb não foi pré-carregado:', error);
+            currentStep++;
+            this.updateLoadingProgress((currentStep / totalSteps) * 100);
         }
 
-        // Tentar carregar áudios (se existirem, caso contrário ignora erro)
+        // 2. Carregar áudios (se existirem, caso contrário ignora erro)
         try {
+            console.log('Carregando áudios...');
             await this.audio.preload({
                 'intro-music': '/assets/audio/music/intro.mp3',
+                'courage-music': '/assets/audio/music/courage.mp3',
                 'click-sfx': '/assets/audio/sfx/click.mp3',
                 'magic-sfx': '/assets/audio/sfx/magic.mp3',
                 'owl-sfx': '/assets/audio/sfx/owl.mp3',
                 'hat-intro': '/assets/audio/voices/hat-intro.mp3',
             });
+            console.log('✓ Áudios carregados');
+
+            currentStep++;
+            this.updateLoadingProgress((currentStep / totalSteps) * 100);
         } catch (error) {
             console.warn('Alguns assets de áudio não foram carregados (normal com arquivos mockados):', error);
+            currentStep++;
+            this.updateLoadingProgress((currentStep / totalSteps) * 100);
         }
 
         console.log('Assets carregados!');
@@ -144,7 +167,7 @@ class Game {
             // Ir para nova fase após delay
             setTimeout(() => {
                 this.loadPhase(result.phase);
-            }, 1500);
+            }, 500);
 
         } else {
             // Código inválido
@@ -185,7 +208,7 @@ class Game {
 
         // Transição
         if (this.currentPhase) {
-            await Transitions.fadeOut(0.5);
+            await Transitions.fadeOut(0.3); // Reduzido de 0.5 para 0.3
             this.currentPhase.destroy();
         }
 
@@ -203,11 +226,11 @@ class Game {
             }
         });
 
-        // Inicializar fase
-        await this.currentPhase.init();
+        // Fade in ANTES de inicializar (para ver a cena sendo montada)
+        await Transitions.fadeIn(0.3); // Reduzido de 0.5 para 0.3
 
-        // Fade in
-        await Transitions.fadeIn(0.5);
+        // Inicializar fase (agora com tela visível)
+        await this.currentPhase.init();
     }
 
     updatePhaseUI(phaseNumber) {

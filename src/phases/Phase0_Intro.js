@@ -19,7 +19,7 @@ export class Phase0_Intro {
         console.log('Iniciando Fase 0: Prólogo');
 
         // 1. Configurar cena
-        this.scene.setBackgroundColor('#0a0a15');
+        this.scene.setBackgroundColor('#2c2c2c');
 
         // 2. Tocar música de fundo (se disponível)
         try {
@@ -33,8 +33,8 @@ export class Phase0_Intro {
     }
 
     async introSequence() {
-        // Aguardar 1 segundo em tela preta
-        await this.delay(1000);
+        // Aguardar brevemente antes de começar
+        await this.delay(300);
 
         // Passo 1: Som de coruja (se disponível)
         try {

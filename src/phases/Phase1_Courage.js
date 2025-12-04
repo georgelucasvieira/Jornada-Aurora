@@ -27,7 +27,7 @@ export class Phase1_Courage {
         this.scene.setBackgroundColor('#4a0e0e'); // Vermelho escuro Gryffindor
 
         // 2. Tocar música
-        // this.audio.playMusic('courage', { fadeIn: 2000 });
+        this.audio.playMusic('courage-music', { fadeIn: 2000 });
 
         // 3. Criar cena
         await this.setupScene();

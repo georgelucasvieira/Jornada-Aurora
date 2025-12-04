@@ -92,7 +92,7 @@ export class GameState {
 
         this.cardsUsed.push(normalizedCode);
         this.unlockedPhases.push(phaseToUnlock);
-        this.save();
+        // this.save();
 
         return {
             valid: true,
