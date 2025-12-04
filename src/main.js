@@ -4,6 +4,7 @@ import { GameState } from './core/GameState.js';
 import { Transitions } from './utils/Transitions.js';
 import { Phase0_Intro } from './phases/Phase0_Intro.js';
 import { Phase1_Courage } from './phases/Phase1_Courage.js';
+import { ASSETS } from './config/assets.js';
 
 class Game {
     constructor() {
@@ -91,12 +92,14 @@ class Game {
         try {
             console.log('Carregando áudios...');
             await this.audio.preload({
-                'intro-music': '/assets/audio/music/intro.mp3',
-                'courage-music': '/assets/audio/music/courage.mp3',
-                'click-sfx': '/assets/audio/sfx/click.mp3',
-                'magic-sfx': '/assets/audio/sfx/magic.mp3',
-                'owl-sfx': '/assets/audio/sfx/owl.mp3',
-                'hat-intro': '/assets/audio/voices/hat-intro.mp3',
+                'intro-music': ASSETS.music.intro,
+                'courage-music': ASSETS.music.courage,
+                'victory-music': ASSETS.music.victory,
+                'click-sfx': ASSETS.sfx.click,
+                'magic-sfx': ASSETS.sfx.magic,
+                'owl-sfx': ASSETS.sfx.owl,
+                'victory-sfx': ASSETS.sfx.victory,
+                'hat-phase0-voice-0': ASSETS.voices.hatIntro,
             });
             console.log('✓ Áudios carregados');
 
