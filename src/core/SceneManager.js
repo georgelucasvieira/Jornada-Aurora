@@ -221,7 +221,7 @@ export class SceneManager {
 
     createParticles(position, count = 20, color = 0xffd700) {
         const particles = [];
-        const particleGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+        const particleGeometry = new THREE.SphereGeometry(0.015, 8, 8);
         const particleMaterial = new THREE.MeshBasicMaterial({ color });
 
         for (let i = 0; i < count; i++) {

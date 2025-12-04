@@ -275,13 +275,13 @@ export class Phase1_Courage {
 
         // SFX
         try {
-            this.audio.playSFX('click');
+            this.audio.playSFX('click-sfx');
         } catch (error) {
             console.warn('SFX click não disponível');
         }
 
         // Partículas douradas
-        const particles = this.scene.createParticles(object.position, 25, 0xffd700);
+        const particles = this.scene.createParticles(object.position, 50, 0xffd700);
         this.particles.push(...particles);
 
         // Animação do objeto (pulsar e brilhar)
@@ -336,7 +336,7 @@ export class Phase1_Courage {
 
         // SFX de vitória
         try {
-            this.audio.playSFX('victory');
+            this.audio.playSFX('victory-sfx');
         } catch (error) {
             console.warn('SFX vitória não disponível');
         }

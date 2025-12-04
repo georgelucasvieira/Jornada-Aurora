@@ -254,7 +254,7 @@ export class Phase0_Intro {
         for (const dialogue of dialogues) {
             // Tocar voz para cada diálogo (placeholder até dublar frase por frase)
             try {
-                this.audio.playVoice('hat-intro');
+                this.audio.playVoice('hat-phase0-voice-0');
             } catch (error) {
                 console.warn('Voice hat-intro não disponível:', error);
             }
@@ -298,7 +298,7 @@ export class Phase0_Intro {
     }
 
     createMagicParticles(position) {
-        const particleCount = 30;
+        const particleCount = 200;
         const particles = this.scene.createParticles(position, particleCount, 0xffd700);
         this.particles.push(...particles);
     }
