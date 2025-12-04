@@ -1,14 +1,13 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
+import { BasePhase } from './BasePhase.js';
 import { Transitions } from '../utils/Transitions.js';
 import { UI } from '../utils/UI.js';
 import { ASSETS, PHASE_DATA } from '../config/assets.js';
 
-export class Phase1_Courage {
+export class Phase1_Courage extends BasePhase {
     constructor(sceneManager, audioManager, gameState) {
-        this.scene = sceneManager;
-        this.audio = audioManager;
-        this.state = gameState;
+        super(sceneManager, audioManager, gameState);
 
         this.objectsFound = [];
         this.totalObjects = 5;
@@ -32,6 +31,7 @@ export class Phase1_Courage {
 
         // 1. Configurar background
         this.scene.setBackgroundColor('#4a0e0e'); // Vermelho escuro Gryffindor
+        // this.scene.setBackground('/assets/textures/gryffindor-room.jpg');
 
         // 3. Criar cena
         await this.setupScene();
@@ -70,19 +70,39 @@ export class Phase1_Courage {
     }
 
     async createObjects() {
-        const objectTypes = ['sword', 'lion', 'wand', 'scroll', 'key'];
+        const objectTypes = ['sword', 'lion', 'wand', 'scroll', 'gold_key'];
         const positions = [
-            { x: -2, y: 0, z: -3 },    // Espada (esquerda)
-            { x: 2, y: 0.5, z: -3 },   // Leão (direita)
+            { x: -5, y: 0, z: -3 },    // Espada (esquerda)
+            { x: 2, y: -1, z: -3 },   // Leão (direita)
             { x: 0, y: -0.5, z: -2 },  // Varinha (centro baixo)
             { x: -1.5, y: 1, z: -4 },  // Pergaminho (esquerda cima)
             { x: 1.5, y: -0.5, z: -4 } // Chave (direita baixo)
         ];
 
-        objectTypes.forEach((type, index) => {
-            const mesh = this.createObjectMesh(type);
+        const rotations = [
+            { x: 0, y: 0, z: 0 },    // Espada (esquerda)
+            { x: 0, y: 1, z: 0 },   // Leão (direita)
+            { x: 0, y: 1, z: 0 },  // Varinha (centro baixo)
+            { x: 0, y: 0, z: 0 },  // Pergaminho (esquerda cima)
+            { x: 0, y: 0, z: 0 } // Chave (direita baixo)
+        ];
+
+        const scales = {
+            'sword': 1,
+            'lion': 1,
+            'wand': 0.1,
+            'scroll': 0.01,
+            'gold_key': 0.1
+        };
+
+        objectTypes.forEach(async (type, index) => {
+            // const mesh = this.createObjectMesh(type);
+            const mesh = await this.scene.addModel(`/assets/models/phase1/${type}.glb`);
             const pos = positions[index];
             mesh.position.set(pos.x, pos.y, pos.z);
+            mesh.scale.setScalar(scales[type]);
+            mesh.rotation.set(rotations[index].x, rotations[index].y, rotations[index].z);
+
             mesh.userData.type = type;
             mesh.userData.found = false;
 
@@ -438,12 +458,13 @@ export class Phase1_Courage {
         }, 2000);
     }
 
-    delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+    // delay() agora vem da BasePhase
 
     destroy() {
         console.log('Destruindo Fase 1');
+
+        // Chamar cleanup da classe base (cancela timers e animações)
+        super.destroy();
 
         // Parar música
         // this.audio.stopMusic(1000);

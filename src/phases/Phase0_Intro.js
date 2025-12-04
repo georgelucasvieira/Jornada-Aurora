@@ -1,14 +1,10 @@
 import * as THREE from 'three';
-import gsap from 'gsap';
-import { Transitions } from '../utils/Transitions.js';
+import { BasePhase } from './BasePhase.js';
 import { UI } from '../utils/UI.js';
-import { ASSETS } from '../config/assets.js';
 
-export class Phase0_Intro {
+export class Phase0_Intro extends BasePhase {
     constructor(sceneManager, audioManager, gameState) {
-        this.scene = sceneManager;
-        this.audio = audioManager;
-        this.state = gameState;
+        super(sceneManager, audioManager, gameState);
 
         this.letter = null;
         this.sortingHat = null;
@@ -19,7 +15,8 @@ export class Phase0_Intro {
         console.log('Iniciando Fase 0: Prólogo');
 
         // 1. Configurar cena
-        this.scene.setBackgroundColor('#2c2c2c');
+        // this.scene.setBackgroundColor('#2c2c2c');
+        this.scene.setBackground('/assets/textures/phase0-bg.png');
 
         // 2. Tocar música de fundo (se disponível)
         try {
@@ -35,6 +32,7 @@ export class Phase0_Intro {
     async introSequence() {
         // Aguardar brevemente antes de começar
         await this.delay(300);
+        if (this.isDestroyed) return;
 
         // Passo 1: Som de coruja (se disponível)
         try {
@@ -43,24 +41,32 @@ export class Phase0_Intro {
             console.warn('SFX coruja não disponível');
         }
         await this.delay(500);
+        if (this.isDestroyed) return;
 
         // Passo 2: Criar e animar carta voando
         await this.animateLetter();
+        if (this.isDestroyed) return;
 
         // Passo 3: Carta se abre e mostra texto
         await this.openLetter();
+        if (this.isDestroyed) return;
 
         // Passo 4: Aparição do Chapéu Seletor
         await this.summonSortingHat();
+        if (this.isDestroyed) return;
 
         // Passo 5: Narração do Chapéu
         await this.hatNarration();
+        if (this.isDestroyed) return;
 
         // Passo 6: Solicitar primeira carta
         this.requestFirstCard();
     }
 
     async animateLetter() {
+        // Guard: se fase foi destruída, cancelar
+        if (this.isDestroyed) return;
+
         // Criar carta como sprite 2D (placeholder)
         const canvas = document.createElement('canvas');
         canvas.width = 256;
@@ -94,14 +100,14 @@ export class Phase0_Intro {
 
         // Animação: carta voa para o centro
         await new Promise(resolve => {
-            gsap.to(this.letter.position, {
+            this.gsapTo(this.letter.position, {
                 y: 0,
                 duration: 2,
                 ease: 'power2.out',
                 onComplete: resolve
             });
 
-            gsap.to(this.letter.rotation, {
+            this.gsapTo(this.letter.rotation, {
                 z: Math.PI * 0.1,
                 duration: 2,
                 ease: 'sine.inOut',
@@ -109,18 +115,27 @@ export class Phase0_Intro {
                 yoyo: true
             });
         });
+
+        // Guard novamente após async
+        if (this.isDestroyed) return;
     }
 
     async openLetter() {
+        // Guard: se fase foi destruída, cancelar
+        if (this.isDestroyed) return;
+
         // Animação da carta abrindo (rotação)
         await new Promise(resolve => {
-            gsap.to(this.letter.rotation, {
+            this.gsapTo(this.letter.rotation, {
                 x: Math.PI * 2,
                 duration: 1,
                 ease: 'power2.in',
                 onComplete: resolve
             });
         });
+
+        // Guard novamente após async
+        if (this.isDestroyed) return;
 
         // Criar partículas douradas
         this.createMagicParticles(this.letter.position);
@@ -132,11 +147,17 @@ export class Phase0_Intro {
             1
         );
 
+        // Guard novamente após async
+        if (this.isDestroyed) return;
+
         await this.delay(3000);
+
+        // Guard novamente após async
+        if (this.isDestroyed) return;
 
         // Carta desaparece
         await new Promise(resolve => {
-            gsap.to(this.letter.material, {
+            this.gsapTo(this.letter.material, {
                 opacity: 0,
                 duration: 1,
                 onComplete: () => {
@@ -146,10 +167,16 @@ export class Phase0_Intro {
             });
         });
 
+        // Guard novamente após async
+        if (this.isDestroyed) return;
+
         await UI.hideText(0.5);
     }
 
     async summonSortingHat() {
+        // Guard: se fase foi destruída, cancelar
+        if (this.isDestroyed) return;
+
         // Carregar modelo 3D real do Chapéu Seletor
         try {
             this.sortingHat = await this.scene.addModel('/assets/models/sorting-hat.glb', {
@@ -157,14 +184,17 @@ export class Phase0_Intro {
                 scale: [0, 0, 0] // Começar invisível para animação
             });
 
+            // Guard novamente após async
+            if (this.isDestroyed) return;
+
             console.log('Chapéu Seletor carregado:', this.sortingHat);
 
             // Partículas ao aparecer
             this.createMagicParticles(new THREE.Vector3(0, 0, -3));
 
-            // Animação de aparição
+            // Animação de aparição usando BasePhase
             await new Promise(resolve => {
-                gsap.to(this.sortingHat.scale, {
+                this.gsapTo(this.sortingHat.scale, {
                     x: 5.0,
                     y: 5.0,
                     z: 5.0,
@@ -174,8 +204,11 @@ export class Phase0_Intro {
                 });
             });
 
+            // Guard novamente
+            if (this.isDestroyed) return;
+
             // Animação idle (balançar suavemente)
-            gsap.to(this.sortingHat.rotation, {
+            this.gsapTo(this.sortingHat.rotation, {
                 z: Math.PI * 0.05,
                 duration: 2,
                 ease: 'sine.inOut',
@@ -202,7 +235,7 @@ export class Phase0_Intro {
 
             // Animação de aparição
             await new Promise(resolve => {
-                gsap.to(this.sortingHat.scale, {
+                this.gsapTo(this.sortingHat.scale, {
                     x: 1.5,
                     y: 1.5,
                     z: 1.5,
@@ -213,7 +246,7 @@ export class Phase0_Intro {
             });
 
             // Animação idle
-            gsap.to(this.sortingHat.rotation, {
+            this.gsapTo(this.sortingHat.rotation, {
                 z: -Math.PI * 0.05,
                 duration: 2,
                 ease: 'sine.inOut',
@@ -272,7 +305,7 @@ export class Phase0_Intro {
 
     animateHatTalking() {
         // Pequena animação de "boca" (balançar)
-        gsap.to(this.sortingHat.rotation, {
+        this.gsapTo(this.sortingHat.rotation, {
             z: Math.PI * 0.15,
             duration: 0.1,
             repeat: 5,
@@ -289,7 +322,7 @@ export class Phase0_Intro {
         );
 
         // Abrir modal de input de carta (já existe no main.js)
-        setTimeout(() => {
+        this.setTimeout(() => {
             const game = window.game;
             if (game) {
                 game.showCardModal();
@@ -303,12 +336,32 @@ export class Phase0_Intro {
         this.particles.push(...particles);
     }
 
-    delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+    // delay() agora vem da BasePhase
 
     destroy() {
         console.log('Destruindo Fase 0');
+
+        // Chamar cleanup da classe base (cancela timers e animações)
+        super.destroy();
+
+        // Remover carta explicitamente (se ainda existir)
+        if (this.letter) {
+            this.scene.scene.remove(this.letter);
+            if (this.letter.geometry) this.letter.geometry.dispose();
+            if (this.letter.material) {
+                if (this.letter.material.map) this.letter.material.map.dispose();
+                this.letter.material.dispose();
+            }
+            this.letter = null;
+        }
+
+        // Remover chapéu explicitamente (se ainda existir)
+        if (this.sortingHat) {
+            this.scene.scene.remove(this.sortingHat);
+            if (this.sortingHat.geometry) this.sortingHat.geometry.dispose();
+            if (this.sortingHat.material) this.sortingHat.material.dispose();
+            this.sortingHat = null;
+        }
 
         // Parar música
         // this.audio.stopMusic(1000);
