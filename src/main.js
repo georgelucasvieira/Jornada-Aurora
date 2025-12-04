@@ -2,6 +2,8 @@ import { SceneManager } from './core/SceneManager.js';
 import { AudioManager } from './core/AudioManager.js';
 import { GameState } from './core/GameState.js';
 import { Transitions } from './utils/Transitions.js';
+import { Phase0_Intro } from './phases/Phase0_Intro.js';
+import { Phase1_Courage } from './phases/Phase1_Courage.js';
 
 class Game {
     constructor() {
@@ -9,7 +11,11 @@ class Game {
         this.audio = null;
         this.state = null;
         this.currentPhase = null;
-        this.phases = {};
+        this.phases = {
+            0: Phase0_Intro,
+            1: Phase1_Courage
+            // Adicionar outras fases conforme desenvolvidas
+        };
 
         // UI Elements
         this.loadingScreen = document.getElementById('loading-screen');
@@ -59,23 +65,25 @@ class Game {
         // Atualizar barra de progresso
         this.updateLoadingProgress(0);
 
-        // TODO: Adicionar assets reais conforme desenvolvimento
-        // Por enquanto, simulação de carregamento
+        // Simulação de carregamento (por enquanto sem assets reais)
         const steps = 5;
         for (let i = 1; i <= steps; i++) {
             await this.delay(200);
             this.updateLoadingProgress((i / steps) * 100);
         }
 
-        // Exemplo de como carregar sons (descomentar quando tiver assets)
-        /*
-        await this.audio.preload({
-            'intro-music': '/assets/audio/music/intro.mp3',
-            'click-sfx': '/assets/audio/sfx/click.mp3',
-            'magic-sfx': '/assets/audio/sfx/magic.mp3',
-            'hat-intro': '/assets/audio/voices/hat-intro.mp3'
-        });
-        */
+        // Tentar carregar áudios (se existirem, caso contrário ignora erro)
+        try {
+            await this.audio.preload({
+                'intro-music': '/assets/audio/music/intro.mp3',
+                'click-sfx': '/assets/audio/sfx/click.mp3',
+                'magic-sfx': '/assets/audio/sfx/magic.mp3',
+                'owl-sfx': '/assets/audio/sfx/owl.mp3',
+                'hat-intro': '/assets/audio/voices/hat-intro.mp3',
+            });
+        } catch (error) {
+            console.warn('Alguns assets de áudio não foram carregados (normal com arquivos mockados):', error);
+        }
 
         console.log('Assets carregados!');
     }
@@ -168,19 +176,38 @@ class Game {
     async loadPhase(phaseNumber) {
         console.log(`Carregando fase ${phaseNumber}...`);
 
-        // TODO: Importar e instanciar fases dinamicamente
-        // Por enquanto, apenas placeholder
-
-        if (phaseNumber === 0) {
-            console.log('Fase 0: Prólogo');
-            // await this.loadPhase0();
+        // Verificar se fase existe
+        const PhaseClass = this.phases[phaseNumber];
+        if (!PhaseClass) {
+            console.error(`Fase ${phaseNumber} não implementada ainda`);
+            return;
         }
+
+        // Transição
+        if (this.currentPhase) {
+            await Transitions.fadeOut(0.5);
+            this.currentPhase.destroy();
+        }
+
+        // Instanciar nova fase
+        this.currentPhase = new PhaseClass(this.scene, this.audio, this.state);
 
         // Atualizar UI
         this.updatePhaseUI(phaseNumber);
 
-        // Iniciar animação da cena
-        this.scene.startAnimation();
+        // IMPORTANTE: Iniciar animação ANTES de init() para renderizar objetos 3D
+        this.scene.startAnimation(() => {
+            // Atualizar partículas se houverem
+            if (this.currentPhase && this.currentPhase.particles) {
+                this.scene.updateParticles(this.currentPhase.particles);
+            }
+        });
+
+        // Inicializar fase
+        await this.currentPhase.init();
+
+        // Fade in
+        await Transitions.fadeIn(0.5);
     }
 
     updatePhaseUI(phaseNumber) {
@@ -214,11 +241,14 @@ class Game {
     }
 
     hideLoading() {
-        Transitions.fadeOut(0.5).then(() => {
-            this.loadingScreen.classList.remove('active');
-            this.gameContainer.classList.add('active');
-            Transitions.fadeIn(0.5);
-        });
+        this.loadingScreen.classList.remove('active');
+        this.gameContainer.classList.add('active');
+
+        // Garantir que o transition overlay comece transparente
+        const overlay = document.getElementById('transition-overlay');
+        if (overlay) {
+            overlay.style.opacity = '0';
+        }
     }
 
     showError(message) {

@@ -30,6 +30,7 @@ html, body {
     width: 100%;
     height: 100%;
     z-index: 1;
+    display: block;
 }
 
 /* ===========================
@@ -408,4 +409,190 @@ html, body {
     .modal-content h2 {
         font-size: 1.5rem;
     }
+}
+
+/* ===========================
+   PROGRESS INDICATOR
+   =========================== */
+
+.progress-indicator {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #ffd700;
+    border-radius: 10px;
+    padding: 1rem;
+    min-width: 200px;
+}
+
+.progress-label {
+    font-family: 'Cinzel', serif;
+    color: #ffd700;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.progress-count {
+    font-size: 1.5rem;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ffd700, #ffed4e);
+    transition: width 0.5s ease;
+    box-shadow: 0 0 10px #ffd700;
+}
+
+/* ===========================
+   GAME BUTTONS
+   =========================== */
+
+.game-button {
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+    font-family: 'Cinzel', serif;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #1a1a2e;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-weight: 600;
+}
+
+.game-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.5);
+}
+
+.game-button:active {
+    transform: translateY(0);
+}
+
+/* ===========================
+   TOAST NOTIFICATIONS
+   =========================== */
+
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.9);
+    color: #fff;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #ffd700;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    max-width: 300px;
+    font-family: 'Crimson Text', serif;
+    font-size: 1rem;
+}
+
+.toast-info {
+    border-left-color: #4a90e2;
+}
+
+.toast-success {
+    border-left-color: #4caf50;
+}
+
+.toast-warning {
+    border-left-color: #ff9800;
+}
+
+.toast-error {
+    border-left-color: #f44336;
+}
+
+/* ===========================
+   CLICK TO CONTINUE
+   =========================== */
+
+.click-to-continue {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 2rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 50;
+    cursor: pointer;
+}
+
+.click-hint {
+    font-family: 'Cinzel', serif;
+    color: #ffd700;
+    font-size: 1rem;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+}
+
+/* ===========================
+   COUNTDOWN TIMER
+   =========================== */
+
+.countdown-timer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+}
+
+.countdown-circle {
+    width: 150px;
+    height: 150px;
+    border: 5px solid #ffd700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+}
+
+.countdown-number {
+    font-family: 'Cinzel', serif;
+    font-size: 3rem;
+    color: #ffd700;
+    font-weight: bold;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+}
+
+/* ===========================
+   INTERACTIVE CONTAINER
+   =========================== */
+
+#interactive-container {
+    pointer-events: none;
+}
+
+#interactive-container > * {
+    pointer-events: auto;
 }

@@ -4,6 +4,14 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 export class SceneManager {
     constructor(canvasId = 'three-canvas') {
         this.canvas = document.getElementById(canvasId);
+
+        if (!this.canvas) {
+            console.error('Canvas não encontrado! ID:', canvasId);
+            throw new Error('Canvas Three.js não encontrado');
+        }
+
+        console.log('Canvas encontrado:', this.canvas);
+
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(
             75,
@@ -15,11 +23,17 @@ export class SceneManager {
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
             antialias: true,
-            alpha: true
+            alpha: false // Mudar para false para ver o fundo
         });
 
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        console.log('Renderer inicializado:', {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            pixelRatio: this.renderer.getPixelRatio()
+        });
 
         // Arrays para gerenciar objetos da cena
         this.currentObjects = [];
@@ -49,18 +63,31 @@ export class SceneManager {
 
     setupDefaultLighting() {
         // Luz ambiente suave
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        ambientLight.userData.isPermanent = true; // Marcar como permanente
         this.scene.add(ambientLight);
 
         // Luz direcional principal
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
         directionalLight.position.set(5, 10, 7.5);
+        directionalLight.userData.isPermanent = true; // Marcar como permanente
         this.scene.add(directionalLight);
+
+        // Luz adicional frontal para garantir visibilidade
+        const frontLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        frontLight.position.set(0, 0, 10);
+        frontLight.userData.isPermanent = true;
+        this.scene.add(frontLight);
     }
 
     clear() {
-        // Remove todos os objetos da cena (exceto luzes)
+        // Remove todos os objetos da cena (exceto luzes permanentes)
         this.currentObjects.forEach(obj => {
+            // Não remover objetos marcados como permanentes (luzes padrão)
+            if (obj.userData?.isPermanent) {
+                return;
+            }
+
             this.scene.remove(obj);
 
             // Dispose de geometria e materiais para liberar memória
@@ -75,7 +102,8 @@ export class SceneManager {
             }
         });
 
-        this.currentObjects = [];
+        // Manter apenas objetos permanentes
+        this.currentObjects = this.currentObjects.filter(obj => obj.userData?.isPermanent);
         this.clickableObjects = [];
     }
 
@@ -248,9 +276,13 @@ export class SceneManager {
     }
 
     startAnimation(callback) {
-        if (this.isAnimating) return;
+        if (this.isAnimating) {
+            console.warn('Animação já está rodando');
+            return;
+        }
 
         this.isAnimating = true;
+        console.log('Iniciando loop de animação Three.js');
 
         const animate = () => {
             if (!this.isAnimating) return;
@@ -265,10 +297,12 @@ export class SceneManager {
                 callback(delta, elapsed);
             }
 
+            // Renderizar cena
             this.renderer.render(this.scene, this.camera);
         };
 
         animate();
+        console.log('Loop de animação iniciado');
     }
 
     stopAnimation() {
