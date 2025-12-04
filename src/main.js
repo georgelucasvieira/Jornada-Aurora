@@ -12,6 +12,7 @@ class Game {
         this.audio = null;
         this.state = null;
         this.currentPhase = null;
+        this.debugMode = false; // Flag para indicar navegação em modo debug
         this.phases = {
             0: Phase0_Intro,
             1: Phase1_Courage
@@ -26,6 +27,15 @@ class Game {
         this.cardCodeInput = document.getElementById('card-code-input');
         this.cardSubmitBtn = document.getElementById('card-submit-btn');
         this.cardError = document.getElementById('card-error');
+    }
+
+    updateDebugUI() {
+        if (import.meta.env.DEV) {
+            const debugModeIndicator = document.getElementById('debug-mode-indicator');
+            if (debugModeIndicator) {
+                debugModeIndicator.style.display = this.debugMode ? 'flex' : 'none';
+            }
+        }
     }
 
     async init() {
@@ -94,7 +104,6 @@ class Game {
             await this.audio.preload({
                 'intro-music': ASSETS.music.intro,
                 'courage-music': ASSETS.music.courage,
-                'victory-music': ASSETS.music.victory,
                 'click-sfx': ASSETS.sfx.click,
                 'magic-sfx': ASSETS.sfx.magic,
                 'owl-sfx': ASSETS.sfx.owl,
@@ -126,6 +135,29 @@ class Game {
 
         // Atalhos de debug (remover em produção)
         if (import.meta.env.DEV) {
+            // Botões de navegação de fases
+            const debugPrevBtn = document.getElementById('debug-prev-phase');
+            const debugNextBtn = document.getElementById('debug-next-phase');
+            const debugPhaseInfo = document.getElementById('debug-phase-info');
+
+            debugPrevBtn.addEventListener('click', () => {
+                const prevPhase = Math.max(0, this.state.currentPhase - 1);
+                this.state.currentPhase = prevPhase;
+                this.debugMode = true; // Ativar modo debug
+                this.updateDebugUI();
+                this.loadPhase(prevPhase);
+                debugPhaseInfo.textContent = `Fase: ${prevPhase}`;
+            });
+
+            debugNextBtn.addEventListener('click', () => {
+                const nextPhase = Math.min(1, this.state.currentPhase + 1); // Limitar a fase 1 por enquanto
+                this.state.currentPhase = nextPhase;
+                this.debugMode = true; // Ativar modo debug
+                this.updateDebugUI();
+                this.loadPhase(nextPhase);
+                debugPhaseInfo.textContent = `Fase: ${nextPhase}`;
+            });
+
             window.addEventListener('keydown', (e) => {
                 // R = Reset progress
                 if (e.key === 'r' && e.ctrlKey) {
@@ -143,6 +175,17 @@ class Game {
                         progress: this.state.phaseProgress,
                         playTime: this.state.getFormattedPlayTime()
                     });
+                }
+
+                // Setas para navegar entre fases
+                if (e.key === 'ArrowLeft' && e.ctrlKey) {
+                    e.preventDefault();
+                    debugPrevBtn.click();
+                }
+
+                if (e.key === 'ArrowRight' && e.ctrlKey) {
+                    e.preventDefault();
+                    debugNextBtn.click();
                 }
             });
         }
@@ -164,6 +207,10 @@ class Game {
             this.hideCardModal();
             this.cardCodeInput.value = '';
 
+            // Desativar modo debug ao usar carta normal
+            this.debugMode = false;
+            this.updateDebugUI();
+
             // Mostrar mensagem de sucesso
             this.showMessage(`Fase ${result.phase} desbloqueada!`, 'success');
 
@@ -181,6 +228,12 @@ class Game {
     }
 
     showCardModal() {
+        // Não mostrar modal em modo debug
+        if (this.debugMode) {
+            console.log('[DEBUG] Modal de carta bloqueado em modo debug');
+            return;
+        }
+
         this.cardInputModal.classList.remove('hidden');
         this.cardCodeInput.focus();
     }

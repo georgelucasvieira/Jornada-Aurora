@@ -18,6 +18,13 @@ export class Phase1_Courage {
 
         // Dados dos objetos
         this.objectsData = PHASE_DATA.phase1.objects;
+
+        // Iniciar música IMEDIATAMENTE no constructor (antes do init)
+        try {
+            this.audio.playMusic('courage-music', { fadeIn: 2000 });
+        } catch (error) {
+            console.warn('Música courage não disponível:', error);
+        }
     }
 
     async init() {
@@ -25,9 +32,6 @@ export class Phase1_Courage {
 
         // 1. Configurar background
         this.scene.setBackgroundColor('#4a0e0e'); // Vermelho escuro Gryffindor
-
-        // 2. Tocar música
-        this.audio.playMusic('courage-music', { fadeIn: 2000 });
 
         // 3. Criar cena
         await this.setupScene();
@@ -214,9 +218,9 @@ export class Phase1_Courage {
 
         for (const text of texts) {
             await UI.showText(text);
-            await this.delay(3000);
+            await this.delay(2500); // Reduzido de 3000 para 2500
             await UI.hideText(0.3);
-            await this.delay(500);
+            await this.delay(300); // Reduzido de 500 para 300
         }
     }
 
@@ -299,14 +303,14 @@ export class Phase1_Courage {
         });
 
         // Mostrar texto e versículo
-        await UI.showText(data.narration, data.verse, 1);
+        await UI.showText(data.narration, data.verse, 0.5);
 
         // Tocar voz do Chapéu para este objeto
         // this.audio.playVoice(`hatPhase1${type.charAt(0).toUpperCase() + type.slice(1)}`);
 
         // Aguardar leitura
-        await this.delay(4000);
-        await UI.hideText(0.5);
+        await this.delay(3000); // Reduzido de 4000 para 3000
+        await UI.hideText(0.3); // Reduzido de 0.5 para 0.3
     }
 
     updateProgress() {

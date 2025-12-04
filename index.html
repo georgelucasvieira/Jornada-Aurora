@@ -60,6 +60,22 @@
 
             <!-- Interactive Elements Container -->
             <div id="interactive-container"></div>
+
+            <!-- Debug Controls (remover em produção) -->
+            <div id="debug-controls" style="position: fixed; bottom: 20px; left: 20px; z-index: 1000; display: flex; gap: 10px;">
+                <button id="debug-prev-phase" style="padding: 10px 20px; background: #333; color: #fff; border: 2px solid #666; border-radius: 5px; cursor: pointer; font-family: 'Cinzel', serif; transition: all 0.3s;">
+                    ← Fase Anterior
+                </button>
+                <button id="debug-next-phase" style="padding: 10px 20px; background: #333; color: #fff; border: 2px solid #666; border-radius: 5px; cursor: pointer; font-family: 'Cinzel', serif; transition: all 0.3s;">
+                    Próxima Fase →
+                </button>
+                <span id="debug-phase-info" style="padding: 10px; background: rgba(0,0,0,0.7); color: #ffd700; border-radius: 5px; font-family: 'Cinzel', serif; display: flex; align-items: center;">
+                    Fase: 0
+                </span>
+                <span id="debug-mode-indicator" style="padding: 10px; background: rgba(255,0,0,0.3); color: #ff4444; border: 2px solid #ff0000; border-radius: 5px; font-family: 'Cinzel', serif; display: none; align-items: center; font-weight: bold;">
+                    🔧 DEBUG MODE
+                </span>
+            </div>
         </div>
 
         <!-- Fade Transition Overlay -->

@@ -25,24 +25,33 @@ export class AudioManager {
                         preload: true,
                         onload: () => resolve(key),
                         onloaderror: (id, error) => {
-                            console.error(`Erro ao carregar som ${key}:`, error);
-                            reject(error);
+                            console.warn(`Falha ao carregar som ${key}: ${config}`, error);
+                            resolve(key); // Resolver ao invés de rejeitar para não travar
                         }
                     };
-                } else {
+                } else if (typeof config === 'object' && config.src) {
                     // Configuração completa
                     howlConfig = {
                         ...config,
                         onload: () => resolve(key),
                         onloaderror: (id, error) => {
-                            console.error(`Erro ao carregar som ${key}:`, error);
-                            reject(error);
+                            console.warn(`Falha ao carregar som ${key}:`, error);
+                            resolve(key); // Resolver ao invés de rejeitar para não travar
                         }
                     };
+                } else {
+                    console.error(`Configuração inválida para som ${key}:`, config);
+                    resolve(key); // Resolver para não travar
+                    return;
                 }
 
-                const sound = new Howl(howlConfig);
-                this.sounds.set(key, sound);
+                try {
+                    const sound = new Howl(howlConfig);
+                    this.sounds.set(key, sound);
+                } catch (error) {
+                    console.error(`Erro ao criar Howl para ${key}:`, error);
+                    resolve(key); // Resolver para não travar
+                }
             });
 
             promises.push(promise);
@@ -64,14 +73,13 @@ export class AudioManager {
         }
 
         // Parar música atual com fade out
-        if (this.currentMusic) {
-            const currentVolume = this.currentMusic.volume();
-            this.currentMusic.fade(currentVolume, 0, 1000);
+        const previousMusic = this.currentMusic; // Salvar referência à música antiga
+        if (previousMusic) {
+            const currentVolume = previousMusic.volume();
+            previousMusic.fade(currentVolume, 0, 1000);
 
             setTimeout(() => {
-                if (this.currentMusic) {
-                    this.currentMusic.stop();
-                }
+                previousMusic.stop(); // Parar a música ANTIGA, não a atual
             }, 1000);
         }
 

@@ -50,7 +50,7 @@ export const ASSETS = {
     // DUBLAGENS DO CHAPÉU SELETOR
     voices: {
         // Fase 0
-        hatIntro: '/assets/audio/voices/hat-voice-0.mp3',
+        hatIntro: '/assets/audio/voices/hat-phase0-voice-0.mp3',
 
         // Fase 1
         hatPhase1Intro: '/assets/audio/voices/hat-phase1-intro.mp3',
