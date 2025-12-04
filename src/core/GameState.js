@@ -110,7 +110,7 @@ export class GameState {
         };
 
         console.log(`Fase ${phaseNumber} completada!`);
-        this.save();
+        //this.save();
     }
 
     isPhaseCompleted(phaseNumber) {
@@ -124,7 +124,7 @@ export class GameState {
     goToPhase(phaseNumber) {
         if (this.isPhaseUnlocked(phaseNumber)) {
             this.currentPhase = phaseNumber;
-            this.save();
+            //this.save();
             return true;
         }
 
@@ -207,7 +207,7 @@ export class GameState {
             this.cardsUsed = data.cardsUsed;
             this.totalPlayTime = data.totalPlayTime;
 
-            this.save();
+            //this.save();
 
             console.log('Save importado com sucesso');
             return true;
