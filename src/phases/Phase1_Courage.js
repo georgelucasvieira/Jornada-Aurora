@@ -319,20 +319,14 @@ export class Phase1_Courage extends BasePhase {
             });
         });
 
-        // Feedback curto do Chapéu Seletor
-        const shortFeedbacks = [
-            'Hmm... interessante.',
-            'Muito bem...',
-            'Ah, sim... vejo.',
-            'Excelente escolha.',
-            'Curioso... continue.'
-        ];
+        // Feedback específico do Chapéu Seletor
+        const dataKey = type === 'gold_key' ? 'key' : type;
+        const data = this.objectsData[dataKey];
 
-        const randomFeedback = shortFeedbacks[Math.floor(Math.random() * shortFeedbacks.length)];
-        await UI.showText(randomFeedback, null, 0.5);
+        await UI.showText(data.feedback, null, 0.5);
 
         // Aguardar brevemente
-        await this.delay(1500);
+        await this.delay(1200);
         await UI.hideText(0.3);
     }
 
@@ -409,52 +403,17 @@ export class Phase1_Courage extends BasePhase {
         // Tocar voz do chapéu final
         // this.audio.playVoice('hatPhase1Complete');
 
-        const narrationTexts = [
-            'Muito bem, Aurora. Você encontrou todos os objetos.',
-            'Cada um deles guarda uma verdade sobre a verdadeira coragem...',
-            ''
-        ];
+        // Reflexão do Chapéu
+        await UI.showText(PHASE_DATA.phase1.finalReflection, null, 0.5);
+        await this.delay(6000);
+        if (this.isDestroyed) return;
+        await UI.hideText(0.3);
+        await this.delay(800);
 
-        // Mapeamento de tipos de modelo para keys de dados
-        const typeToDataKey = (type) => type === 'gold_key' ? 'key' : type;
-
-        // Revelar o significado de cada objeto encontrado
-        for (const type of this.objectsFound) {
-            const dataKey = typeToDataKey(type);
-            const data = this.objectsData[dataKey];
-            narrationTexts.push(`${data.narration}`);
-        }
-
-        // Adicionar versículos
-        narrationTexts.push('');
-        narrationTexts.push('A Palavra nos ensina:');
-
-        for (const type of this.objectsFound) {
-            const dataKey = typeToDataKey(type);
-            const data = this.objectsData[dataKey];
-            narrationTexts.push(`"${data.verse}"`);
-        }
-
-        // Mensagem final sobre São Jorge
-        narrationTexts.push('');
-        narrationTexts.push(PHASE_DATA.phase1.saintMessage);
-
-        // Mostrar cada texto da narração
-        for (const text of narrationTexts) {
-            if (this.isDestroyed) return;
-
-            if (text === '') {
-                await this.delay(800);
-                continue;
-            }
-
-            await UI.showText(text, null, 0.5);
-            await this.delay(3500);
-            if (this.isDestroyed) return;
-
-            await UI.hideText(0.3);
-            await this.delay(500);
-        }
+        // Versículo (sem voz, apenas texto)
+        await UI.showText(PHASE_DATA.phase1.verse, null, 0.5);
+        await this.delay(5000);
+        if (this.isDestroyed) return;
     }
 
     async showCompletionPortal() {

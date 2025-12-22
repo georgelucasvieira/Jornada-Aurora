@@ -68,31 +68,47 @@ export class AudioManager {
         } = options;
 
         if (!this.sounds.has(key)) {
-            console.error(`Música não encontrada: ${key}`);
-            return;
+            console.warn(`Música não encontrada: ${key}`);
+            return null;
+        }
+
+        const music = this.sounds.get(key);
+
+        // Se o som não carregou corretamente, retornar null
+        if (!music || music.state() === 'unloaded') {
+            console.warn(`Música ${key} não foi carregada corretamente`);
+            return null;
         }
 
         // Parar música atual com fade out
         const previousMusic = this.currentMusic; // Salvar referência à música antiga
         if (previousMusic) {
-            const currentVolume = previousMusic.volume();
-            previousMusic.fade(currentVolume, 0, 1000);
+            try {
+                const currentVolume = previousMusic.volume();
+                previousMusic.fade(currentVolume, 0, 1000);
 
-            setTimeout(() => {
-                previousMusic.stop(); // Parar a música ANTIGA, não a atual
-            }, 1000);
+                setTimeout(() => {
+                    previousMusic.stop(); // Parar a música ANTIGA, não a atual
+                }, 1000);
+            } catch (error) {
+                console.warn('Erro ao parar música anterior:', error);
+            }
         }
 
         // Tocar nova música
-        const music = this.sounds.get(key);
-        music.loop(loop);
-        music.volume(0);
-        music.play();
-        music.fade(0, volume, fadeIn);
+        try {
+            music.loop(loop);
+            music.volume(0);
+            music.play();
+            music.fade(0, volume, fadeIn);
 
-        this.currentMusic = music;
+            this.currentMusic = music;
 
-        return music;
+            return music;
+        } catch (error) {
+            console.warn(`Erro ao tocar música ${key}:`, error);
+            return null;
+        }
     }
 
     stopMusic(fadeOut = 1000) {
@@ -128,16 +144,28 @@ export class AudioManager {
         } = options;
 
         if (!this.sounds.has(key)) {
-            console.error(`SFX não encontrado: ${key}`);
-            return;
+            console.warn(`SFX não encontrado: ${key}`);
+            return null;
         }
 
         const sfx = this.sounds.get(key);
-        sfx.volume(volume);
-        sfx.rate(rate);
-        sfx.play();
 
-        return sfx;
+        // Se o som não carregou corretamente, retornar null
+        if (!sfx || sfx.state() === 'unloaded') {
+            console.warn(`SFX ${key} não foi carregado corretamente`);
+            return null;
+        }
+
+        try {
+            sfx.volume(volume);
+            sfx.rate(rate);
+            sfx.play();
+
+            return sfx;
+        } catch (error) {
+            console.warn(`Erro ao tocar SFX ${key}:`, error);
+            return null;
+        }
     }
 
     playVoice(key, options = {}) {
@@ -148,31 +176,43 @@ export class AudioManager {
         } = options;
 
         if (!this.sounds.has(key)) {
-            console.error(`Voz não encontrada: ${key}`);
-            return;
-        }
-
-        // Parar voz atual se houver
-        if (this.currentVoice && this.currentVoice.playing()) {
-            this.currentVoice.stop();
+            console.warn(`Voz não encontrada: ${key}`);
+            return null;
         }
 
         const voice = this.sounds.get(key);
-        voice.volume(volume);
 
-        const soundId = voice.play();
-
-        if (onPlay) {
-            onPlay();
+        // Se o som não carregou corretamente, retornar null
+        if (!voice || voice.state() === 'unloaded') {
+            console.warn(`Voz ${key} não foi carregada corretamente`);
+            return null;
         }
 
-        if (onEnd) {
-            voice.once('end', onEnd);
+        try {
+            // Parar voz atual se houver
+            if (this.currentVoice && this.currentVoice.playing()) {
+                this.currentVoice.stop();
+            }
+
+            voice.volume(volume);
+
+            const soundId = voice.play();
+
+            if (onPlay) {
+                onPlay();
+            }
+
+            if (onEnd) {
+                voice.once('end', onEnd);
+            }
+
+            this.currentVoice = voice;
+
+            return { sound: voice, id: soundId };
+        } catch (error) {
+            console.warn(`Erro ao tocar voz ${key}:`, error);
+            return null;
         }
-
-        this.currentVoice = voice;
-
-        return { sound: voice, id: soundId };
     }
 
     stopVoice() {

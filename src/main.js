@@ -4,6 +4,9 @@ import { GameState } from './core/GameState.js';
 import { Transitions } from './utils/Transitions.js';
 import { Phase0_Intro } from './phases/Phase0_Intro.js';
 import { Phase1_Courage } from './phases/Phase1_Courage.js';
+import { Phase2_Wisdom } from './phases/Phase2_Wisdom.js';
+import { Phase3_Loyalty } from './phases/Phase3_Loyalty.js';
+import { Phase4_Faith } from './phases/Phase4_Faith.js';
 import { ASSETS } from './config/assets.js';
 
 class Game {
@@ -12,11 +15,13 @@ class Game {
         this.audio = null;
         this.state = null;
         this.currentPhase = null;
-        this.debugMode = false; // Flag para indicar navegação em modo debug
+        this.debugMode = false;
         this.phases = {
             0: Phase0_Intro,
-            1: Phase1_Courage
-            // Adicionar outras fases conforme desenvolvidas
+            1: Phase1_Courage,
+            2: Phase2_Wisdom,
+            3: Phase3_Loyalty,
+            4: Phase4_Faith
         };
 
         // UI Elements
@@ -150,7 +155,7 @@ class Game {
             });
 
             debugNextBtn.addEventListener('click', () => {
-                const nextPhase = Math.min(1, this.state.currentPhase + 1); // Limitar a fase 1 por enquanto
+                const nextPhase = this.state.currentPhase + 1;
                 this.state.currentPhase = nextPhase;
                 this.debugMode = true; // Ativar modo debug
                 this.updateDebugUI();

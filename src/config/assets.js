@@ -80,33 +80,201 @@ export const ASSETS = {
 // Dados de conteúdo das fases
 export const PHASE_DATA = {
     phase1: {
+        title: 'Coragem',
+        house: 'Gryffindor',
         objects: {
             sword: {
-                narration: "A coragem não está na força da lâmina, mas no coração de quem a empunha.",
-                verse: "Seja forte e corajoso - Josué 1:9",
-                verseRef: "Josué 1:9"
+                feedback: "Hmm... interessante.",
+                verse: "Seja forte e corajoso - Josué 1:9"
             },
             lion: {
-                narration: "O leão ruge, mas há um Leão maior que venceu.",
-                verse: "O Leão da tribo de Judá venceu - Apocalipse 5:5",
-                verseRef: "Apocalipse 5:5"
+                feedback: "Muito bem...",
+                verse: "O Leão da tribo de Judá venceu - Apocalipse 5:5"
             },
             wand: {
-                narration: "Instrumentos são úteis, mas quem age é o poder maior.",
-                verse: "Não por força nem por poder, mas pelo meu Espírito - Zacarias 4:6",
-                verseRef: "Zacarias 4:6"
+                feedback: "Ah, sim... vejo.",
+                verse: "Não por força nem por poder, mas pelo meu Espírito - Zacarias 4:6"
             },
             scroll: {
-                narration: "A Palavra guia os corajosos.",
-                verse: "Lâmpada para os meus pés é a tua palavra - Salmos 119:105",
-                verseRef: "Salmos 119:105"
+                feedback: "Excelente escolha.",
+                verse: "Lâmpada para os meus pés é a tua palavra - Salmos 119:105"
             },
             key: {
-                narration: "A coragem abre portas que o medo tranca.",
-                verse: "Pedi e vos será dado - Mateus 7:7",
-                verseRef: "Mateus 7:7"
+                feedback: "Curioso... continue.",
+                verse: "Pedi e vos será dado - Mateus 7:7"
             }
         },
-        saintMessage: "São Jorge enfrentou o dragão não por sua força, mas pela fé em Deus. A verdadeira coragem vem da confiança no Senhor."
+        finalReflection: "Coragem... não é ausência de medo, mas a escolha de agir apesar dele. São Jorge não venceu o dragão por ser o mais forte, mas porque sua fé era maior que seu medo.",
+        verse: "\"Seja forte e corajoso. Não tenha medo, nem desanime, pois o Senhor, o seu Deus, estará com você por onde você andar.\" - Josué 1:9"
+    },
+
+    phase2: {
+        title: 'Sabedoria',
+        house: 'Ravenclaw',
+        riddles: [
+            {
+                question: "Sou o princípio de tudo,\nSem mim nada se fez.\nEstou na luz, mas não sou luz.\nQuem sou eu?",
+                options: [
+                    { text: "Tempo", correct: false },
+                    { text: "Verbo (Palavra)", correct: true },
+                    { text: "Sabedoria", correct: false }
+                ],
+                correctAnswer: 1,
+                bibleVerse: "\"No princípio era o Verbo, e o Verbo estava com Deus, e o Verbo era Deus.\" - João 1:1",
+                bookName: "João"
+            },
+            {
+                question: "Construí minha casa sobre rocha,\nAcumulei conhecimento e tesouros,\nMas no fim, declarei: tudo é vão.\nQuem sou?",
+                options: [
+                    { text: "Salomão", correct: true },
+                    { text: "Moisés", correct: false },
+                    { text: "Pedro", correct: false }
+                ],
+                correctAnswer: 0,
+                bibleVerse: "\"Vaidade de vaidades, diz o pregador, tudo é vaidade.\" - Eclesiastes 1:2",
+                bookName: "Eclesiastes"
+            },
+            {
+                question: "Tenho asas mas não voo,\nEntro por portas fechadas,\nTransformo corações sem tocá-los.\nQuem sou?",
+                options: [
+                    { text: "Anjo", correct: false },
+                    { text: "Espírito Santo", correct: true },
+                    { text: "Oração", correct: false }
+                ],
+                correctAnswer: 1,
+                bibleVerse: "\"O vento sopra onde quer, ouves o seu som, mas não sabes de onde vem, nem para onde vai; assim é todo aquele que é nascido do Espírito.\" - João 3:8",
+                bookName: "Espírito"
+            }
+        ],
+        finalReflection: "A fé e a razão são asas que elevam a alma a Deus. São Tomás de Aquino buscou a sabedoria nos livros... mas encontrou a Verdade além deles.",
+        verse: "\"O temor do Senhor é o princípio da sabedoria, e o conhecimento do Santo é prudência.\" - Provérbios 9:10"
+    },
+
+    phase3: {
+        title: 'Lealdade',
+        house: 'Hufflepuff',
+        events: [
+            {
+                id: 1,
+                text: "Descobriu que Maria estava grávida",
+                correctOrder: 1,
+                description: "José, noivo de Maria, descobre que ela está esperando um filho."
+            },
+            {
+                id: 2,
+                text: "Anjo apareceu em sonho",
+                correctOrder: 2,
+                description: "Um anjo do Senhor aparece a José em sonho, revelando que a criança é do Espírito Santo."
+            },
+            {
+                id: 3,
+                text: "Fugiu para o Egito com a família",
+                correctOrder: 3,
+                description: "Alertado por um anjo, José foge com Maria e Jesus para o Egito, escapando de Herodes."
+            },
+            {
+                id: 4,
+                text: "Perdeu Jesus no templo",
+                correctOrder: 4,
+                description: "Aos 12 anos, Jesus fica no templo sem avisar. José e Maria o procuram aflitos."
+            },
+            {
+                id: 5,
+                text: "Ensinou Jesus a profissão de carpinteiro",
+                correctOrder: 5,
+                description: "José transmite seu ofício ao filho, trabalhando lado a lado com Jesus."
+            },
+            {
+                id: 6,
+                text: "Morreu nos braços de Jesus e Maria",
+                correctOrder: 6,
+                description: "São José falece cercado pela Sagrada Família, exemplo de morte santa."
+            }
+        ],
+        moralChoice: {
+            question: "José teve 3 escolhas ao descobrir a gravidez de Maria:",
+            options: [
+                { text: "Denunciá-la publicamente (Lei judaica)", moral: "law" },
+                { text: "Abandoná-la secretamente (planejou isso)", moral: "mercy" },
+                { text: "Confiar no plano de Deus (fez isso)", moral: "faith" }
+            ],
+            correctAnswer: 2,
+            explanation: "A lealdade verdadeira escolhe confiar, mesmo quando não compreende."
+        },
+        finalReflection: "Não há fidelidade maior que obedecer sem entender. São José foi leal a Maria quando tudo indicava que deveria abandoná-la. Lealdade é amor em ação.",
+        verse: "\"O amigo ama em todos os momentos; é um irmão na adversidade.\" - Provérbios 17:17"
+    },
+
+    phase4: {
+        title: 'Ambição Redimida',
+        house: 'Slytherin',
+        intro: "Slytherin não é só maldade, Aurora. A ambição pode ser santa quando direcionada ao Reino. Você vai enfrentar tentações... escolha sabiamente.",
+        moralChoices: [
+            {
+                id: 1,
+                situation: "Você encontrou uma relíquia poderosa que pode:",
+                options: [
+                    {
+                        text: "Usar para vencer facilmente as próximas fases",
+                        moral: "fail",
+                        feedback: "Atalhos raramente levam ao destino certo...",
+                        reference: "Simão Mago tentou comprar o poder do Espírito Santo"
+                    },
+                    {
+                        text: "Guardar para momento de real necessidade",
+                        moral: "neutral",
+                        feedback: "Prudência... mas ainda há apego ao poder.",
+                        reference: "O cuidado pode mascarar a falta de fé"
+                    },
+                    {
+                        text: "Destruir, pois poder corrompe",
+                        moral: "ideal",
+                        feedback: "Sabedoria verdadeira...",
+                        reference: "\"Tudo considero perda\" - Filipenses 3:8"
+                    }
+                ],
+                correctAnswer: 2
+            },
+            {
+                id: 2,
+                situation: "A serpente oferece conhecimento proibido:\n\"Posso revelar todos os mistérios... mas você não poderá compartilhar com ninguém\"",
+                options: [
+                    {
+                        text: "Aceito (conhecimento é poder)",
+                        moral: "fail",
+                        feedback: "A mesma tentação do Éden...",
+                        reference: "Gênesis 3 - Eva e a serpente"
+                    },
+                    {
+                        text: "Recuso (conhecimento sem amor é vazio)",
+                        moral: "ideal",
+                        feedback: "Discernimento...",
+                        reference: "\"Se tenho conhecimento mas não amor, nada sou\" - 1 Coríntios 13"
+                    }
+                ],
+                correctAnswer: 1
+            },
+            {
+                id: 3,
+                situation: "Você pode sacrificar pontos para ajudar outro bruxo perdido,\nmas isso tornará sua jornada mais difícil.",
+                options: [
+                    {
+                        text: "Ajudo (caridade)",
+                        moral: "ideal",
+                        feedback: "O caminho do amor...",
+                        reference: "Parábola do Bom Samaritano"
+                    },
+                    {
+                        text: "Continuo (foco na missão)",
+                        moral: "fail",
+                        feedback: "Como o Levita e o Sacerdote que passaram reto...",
+                        reference: "Lucas 10:31-32"
+                    }
+                ],
+                correctAnswer: 0
+            }
+        ],
+        finalReflection: "A verdadeira ambição é desejar a santidade, não o poder. São Paulo foi perseguidor ambicioso... mas tornou-se apóstolo ardente. A diferença? A direção da ambição.",
+        verse: "\"Porque pela graça sois salvos, mediante a fé; e isto não vem de vós; é dom de Deus.\" - Efésios 2:8"
     }
 };
