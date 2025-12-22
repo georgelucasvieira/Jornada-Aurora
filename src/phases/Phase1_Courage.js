@@ -1,9 +1,8 @@
 import * as THREE from 'three';
-import gsap from 'gsap';
 import { BasePhase } from './BasePhase.js';
 import { Transitions } from '../utils/Transitions.js';
 import { UI } from '../utils/UI.js';
-import { ASSETS, PHASE_DATA } from '../config/assets.js';
+import { PHASE_DATA } from '../config/assets.js';
 
 export class Phase1_Courage extends BasePhase {
     constructor(sceneManager, audioManager, gameState) {
@@ -57,7 +56,7 @@ export class Phase1_Courage extends BasePhase {
         this.scene.currentObjects.push(fireLight);
 
         // Animar fogo
-        gsap.to(fireLight, {
+        this.gsapTo(fireLight, {
             intensity: 2,
             duration: 1,
             repeat: -1,
@@ -113,7 +112,7 @@ export class Phase1_Courage extends BasePhase {
             this.objectMeshes[type] = mesh;
 
             // Animação idle (flutuar suavemente)
-            gsap.to(mesh.position, {
+            this.gsapTo(mesh.position, {
                 y: pos.y + 0.2,
                 duration: 2 + Math.random(),
                 repeat: -1,
@@ -176,7 +175,7 @@ export class Phase1_Courage extends BasePhase {
                 mesh.add(tipMesh);
 
                 // Brilho animado
-                gsap.to(tipMesh.material, {
+                this.gsapTo(tipMesh.material, {
                     opacity: 0.5,
                     duration: 0.5,
                     repeat: -1,
@@ -209,7 +208,7 @@ export class Phase1_Courage extends BasePhase {
                 mesh.add(headMesh);
 
                 // Rotação constante
-                gsap.to(mesh.rotation, {
+                this.gsapTo(mesh.rotation, {
                     y: Math.PI * 2,
                     duration: 4,
                     repeat: -1,
@@ -261,7 +260,7 @@ export class Phase1_Courage extends BasePhase {
         // Mostrar dica inicial
         UI.showText('Clique nos objetos dourados para descobrir seus segredos...', null, 0.5);
 
-        setTimeout(() => {
+        this.setTimeout(() => {
             UI.hideText(0.5);
         }, 4000);
     }
@@ -295,8 +294,6 @@ export class Phase1_Courage extends BasePhase {
     }
 
     async handleObjectFound(type, object) {
-        const data = this.objectsData[type];
-
         // SFX
         try {
             this.audio.playSFX('click-sfx');
@@ -310,7 +307,7 @@ export class Phase1_Courage extends BasePhase {
 
         // Animação do objeto (pulsar e brilhar)
         await new Promise(resolve => {
-            gsap.to(object.scale, {
+            this.gsapTo(object.scale, {
                 x: 1.3,
                 y: 1.3,
                 z: 1.3,
@@ -322,15 +319,21 @@ export class Phase1_Courage extends BasePhase {
             });
         });
 
-        // Mostrar texto e versículo
-        await UI.showText(data.narration, data.verse, 0.5);
+        // Feedback curto do Chapéu Seletor
+        const shortFeedbacks = [
+            'Hmm... interessante.',
+            'Muito bem...',
+            'Ah, sim... vejo.',
+            'Excelente escolha.',
+            'Curioso... continue.'
+        ];
 
-        // Tocar voz do Chapéu para este objeto
-        // this.audio.playVoice(`hatPhase1${type.charAt(0).toUpperCase() + type.slice(1)}`);
+        const randomFeedback = shortFeedbacks[Math.floor(Math.random() * shortFeedbacks.length)];
+        await UI.showText(randomFeedback, null, 0.5);
 
-        // Aguardar leitura
-        await this.delay(3000); // Reduzido de 4000 para 3000
-        await UI.hideText(0.3); // Reduzido de 0.5 para 0.3
+        // Aguardar brevemente
+        await this.delay(1500);
+        await UI.hideText(0.3);
     }
 
     updateProgress() {
@@ -340,7 +343,7 @@ export class Phase1_Courage extends BasePhase {
 
         const percentage = (this.objectsFound.length / this.totalObjects) * 100;
 
-        gsap.to(progressFill, {
+        this.gsapTo(progressFill, {
             width: `${percentage}%`,
             duration: 0.5,
             ease: 'power2.out'
@@ -376,13 +379,10 @@ export class Phase1_Courage extends BasePhase {
             this.particles.push(...particles);
         }
 
-        // Mensagem de conclusão
-        await UI.showText(PHASE_DATA.phase1.saintMessage, null, 1);
+        await this.delay(1000);
 
-        // Tocar voz final
-        // this.audio.playVoice('hatPhase1Complete');
-
-        await this.delay(6000);
+        // Narração final do Chapéu Seletor revelando os significados
+        await this.finalNarration();
 
         // Mostrar imagem São Jorge (se disponível)
         // TODO: Adicionar imagem
@@ -403,6 +403,60 @@ export class Phase1_Courage extends BasePhase {
         this.requestNextCard();
     }
 
+    async finalNarration() {
+        if (this.isDestroyed) return;
+
+        // Tocar voz do chapéu final
+        // this.audio.playVoice('hatPhase1Complete');
+
+        const narrationTexts = [
+            'Muito bem, Aurora. Você encontrou todos os objetos.',
+            'Cada um deles guarda uma verdade sobre a verdadeira coragem...',
+            ''
+        ];
+
+        // Mapeamento de tipos de modelo para keys de dados
+        const typeToDataKey = (type) => type === 'gold_key' ? 'key' : type;
+
+        // Revelar o significado de cada objeto encontrado
+        for (const type of this.objectsFound) {
+            const dataKey = typeToDataKey(type);
+            const data = this.objectsData[dataKey];
+            narrationTexts.push(`${data.narration}`);
+        }
+
+        // Adicionar versículos
+        narrationTexts.push('');
+        narrationTexts.push('A Palavra nos ensina:');
+
+        for (const type of this.objectsFound) {
+            const dataKey = typeToDataKey(type);
+            const data = this.objectsData[dataKey];
+            narrationTexts.push(`"${data.verse}"`);
+        }
+
+        // Mensagem final sobre São Jorge
+        narrationTexts.push('');
+        narrationTexts.push(PHASE_DATA.phase1.saintMessage);
+
+        // Mostrar cada texto da narração
+        for (const text of narrationTexts) {
+            if (this.isDestroyed) return;
+
+            if (text === '') {
+                await this.delay(800);
+                continue;
+            }
+
+            await UI.showText(text, null, 0.5);
+            await this.delay(3500);
+            if (this.isDestroyed) return;
+
+            await UI.hideText(0.3);
+            await this.delay(500);
+        }
+    }
+
     async showCompletionPortal() {
         // Criar portal dourado no centro
         const geometry = new THREE.TorusGeometry(1, 0.2, 16, 100);
@@ -418,19 +472,19 @@ export class Phase1_Courage extends BasePhase {
         this.scene.currentObjects.push(portal);
 
         // Animação do portal
-        gsap.to(portal.material, {
+        this.gsapTo(portal.material, {
             opacity: 0.8,
             duration: 1
         });
 
-        gsap.to(portal.rotation, {
+        this.gsapTo(portal.rotation, {
             z: Math.PI * 2,
             duration: 3,
             repeat: -1,
             ease: 'none'
         });
 
-        gsap.to(portal.scale, {
+        this.gsapTo(portal.scale, {
             x: 1.5,
             y: 1.5,
             z: 1.5,
@@ -450,7 +504,7 @@ export class Phase1_Courage extends BasePhase {
             1
         );
 
-        setTimeout(() => {
+        this.setTimeout(() => {
             const game = window.game;
             if (game) {
                 game.showCardModal();
