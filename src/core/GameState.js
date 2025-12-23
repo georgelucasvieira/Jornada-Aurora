@@ -21,6 +21,15 @@ export class GameState {
         this.cardsUsed = [];
         this.startTime = Date.now();
         this.totalPlayTime = 0;
+
+        // Sistema de consequências (escolhas da Fase 4 afetam fases futuras)
+        this.consequences = {
+            relicDestroyed: false,    // Se destruiu a relíquia
+            relicKept: false,         // Se guardou a relíquia
+            relicUsed: false,         // Se usou a relíquia
+            helpedStranger: false,    // Se ajudou o bruxo perdido
+            acceptedKnowledge: false  // Se aceitou conhecimento proibido
+        };
     }
 
     save() {
@@ -30,6 +39,7 @@ export class GameState {
             phaseProgress: this.phaseProgress,
             cardsUsed: this.cardsUsed,
             totalPlayTime: this.totalPlayTime + (Date.now() - this.startTime),
+            consequences: this.consequences,
             lastSave: Date.now()
         };
 
@@ -55,6 +65,13 @@ export class GameState {
                 this.phaseProgress = data.phaseProgress || {};
                 this.cardsUsed = data.cardsUsed || [];
                 this.totalPlayTime = data.totalPlayTime || 0;
+                this.consequences = data.consequences || {
+                    relicDestroyed: false,
+                    relicKept: false,
+                    relicUsed: false,
+                    helpedStranger: false,
+                    acceptedKnowledge: false
+                };
 
                 console.log('Progresso carregado:', data);
                 return true;

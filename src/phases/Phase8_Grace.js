@@ -118,17 +118,20 @@ export class Phase8_Grace extends BasePhase {
     async voldemortIntro() {
         if (this.isDestroyed) return;
 
+        // Silêncio inicial
+        await this.delay(3000);
+
         await UI.showText(PHASE_DATA.phase8.voldemortIntro, null, 0.5);
-        await this.delay(7000);
+        await this.delay(5000);
         if (this.isDestroyed) return;
 
         await UI.hideText(0.3);
-        await this.delay(3000); // 3s de silêncio
+        await this.delay(5000); // 5s de silêncio antes do enigma
 
         if (this.isDestroyed) return;
 
         await UI.showText(PHASE_DATA.phase8.enigmaIntro, null, 0.5);
-        await this.delay(4000);
+        await this.delay(3000);
         if (this.isDestroyed) return;
     }
 
@@ -355,12 +358,12 @@ export class Phase8_Grace extends BasePhase {
 
         UI.hideText(0);
 
-        await this.delay(2000);
+        await this.delay(3000);
 
-        // SILÊNCIO ABSOLUTO (5s)
+        // SILÊNCIO ABSOLUTO (10s - morte, vazio)
         this.scene.setBackgroundColor('#000000');
 
-        await this.delay(5000);
+        await this.delay(10000);
 
         // RESSURREIÇÃO
         await this.resurrection();
@@ -397,12 +400,12 @@ export class Phase8_Grace extends BasePhase {
             ease: 'power1.out'
         });
 
-        // Background vai clareando
-        await this.delay(2000);
+        // Background vai clareando (mais lento)
+        await this.delay(4000);
 
         this.scene.setBackgroundColor('#1a1410');
 
-        await this.delay(1000);
+        await this.delay(3000); // Mais pausa antes da revelação
 
         // Revelação
         await this.revelation();
@@ -411,17 +414,22 @@ export class Phase8_Grace extends BasePhase {
     async revelation() {
         if (this.isDestroyed) return;
 
-        // Revelar linha por linha
+        // Revelar linha por linha (mais devagar)
         for (const line of PHASE_DATA.phase8.revelation) {
             if (this.isDestroyed) return;
 
+            if (line === '') {
+                await this.delay(2000); // Mais pausa em linhas vazias
+                continue;
+            }
+
             await UI.showText(line, null, 0.5);
-            await this.delay(3000);
+            await this.delay(4000); // Mais tempo em cada linha
             await UI.hideText(0.3);
-            await this.delay(800);
+            await this.delay(1500); // Mais silêncio entre linhas
         }
 
-        await this.delay(2000);
+        await this.delay(4000); // Mais pausa antes da mensagem principal
 
         // Mensagem principal
         await this.mainMessage();
@@ -434,24 +442,24 @@ export class Phase8_Grace extends BasePhase {
             if (this.isDestroyed) return;
 
             if (line === '') {
-                await this.delay(1000);
+                await this.delay(2500); // Mais silêncio entre linhas
                 continue;
             }
 
             await UI.showText(line, null, 0.5);
-            await this.delay(3500);
+            await this.delay(5000); // Mais tempo por linha
             await UI.hideText(0.3);
-            await this.delay(600);
+            await this.delay(1200); // Mais pausa
         }
 
-        await this.delay(2000);
+        await this.delay(4000); // Mais silêncio antes do versículo
 
         // Versículo
         await UI.showText(PHASE_DATA.phase8.verse, null, 0.5);
-        await this.delay(7000);
+        await this.delay(8000);
         if (this.isDestroyed) return;
         await UI.hideText(0.5);
-        await this.delay(2000);
+        await this.delay(4000); // Mais pausa antes da mensagem final
 
         // Mensagem final
         await this.finalMessage();
@@ -481,20 +489,20 @@ export class Phase8_Grace extends BasePhase {
             console.warn('Música vitória não disponível');
         }
 
-        await this.delay(2000);
+        await this.delay(3000); // Mais pausa inicial
 
         for (const line of PHASE_DATA.phase8.finalMessage) {
             if (this.isDestroyed) return;
 
             if (line === '') {
-                await this.delay(1000);
+                await this.delay(2500); // Mais silêncio
                 continue;
             }
 
             await UI.showText(line, null, 0.5);
-            await this.delay(4000);
+            await this.delay(5500); // Mais tempo por linha
             await UI.hideText(0.3);
-            await this.delay(600);
+            await this.delay(1000); // Mais pausa
         }
 
         await this.delay(3000);

@@ -227,9 +227,8 @@ export class Phase1_Courage extends BasePhase {
 
     async hatIntro() {
         const texts = [
-            'Aqui está a Sala Comunal de Gryffindor, onde os corajosos se reúnem.',
-            'Mas coragem verdadeira não vem apenas do coração... vem de algo maior.',
-            'Procure pelos 5 objetos escondidos nesta sala. Cada um revelará uma verdade sobre a coragem.'
+            'Gryffindor.',
+            'Procure pelos 5 objetos escondidos.'
         ];
 
         // Tocar voz

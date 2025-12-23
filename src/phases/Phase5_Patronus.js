@@ -104,7 +104,7 @@ export class Phase5_Patronus extends BasePhase {
     async selectMemories() {
         if (this.isDestroyed) return;
 
-        await UI.showText("Escolha 3 memórias que trazem luz ao seu coração:", null, 0.5);
+        await UI.showText("Escolha 3 memórias:", null, 0.5);
         await this.delay(3000);
         if (this.isDestroyed) return;
 
@@ -250,7 +250,7 @@ export class Phase5_Patronus extends BasePhase {
     async selectPrayer() {
         if (this.isDestroyed) return;
 
-        await UI.showText("Agora... qual é seu verdadeiro Patrono?", null, 0.5);
+        await UI.showText("Qual é seu verdadeiro Patrono?", null, 0.5);
         await this.delay(3000);
         if (this.isDestroyed) return;
 
@@ -313,7 +313,7 @@ export class Phase5_Patronus extends BasePhase {
     async startConfrontation() {
         if (this.isDestroyed) return;
 
-        await UI.showText("Os Dementadores se aproximam! Clique neles para expulsá-los com a luz!", null, 0.5);
+        await UI.showText("Clique neles.", null, 0.5);
         await this.delay(3000);
         if (this.isDestroyed) return;
 
@@ -427,7 +427,7 @@ export class Phase5_Patronus extends BasePhase {
     async retry() {
         if (this.isDestroyed) return;
 
-        await UI.showText("A escuridão é forte... mas você pode tentar novamente.", null, 0.5);
+        await UI.showText("Tente novamente.", null, 0.5);
         await this.delay(3000);
         if (this.isDestroyed) return;
         await UI.hideText(0.3);

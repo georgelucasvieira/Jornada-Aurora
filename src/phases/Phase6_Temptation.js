@@ -184,15 +184,18 @@ export class Phase6_Temptation extends BasePhase {
     }
 
     async checkProgress() {
-        // Lógica simplificada: cada 3 movimentos = novo dilema
+        // Confusing logic: sometimes movement triggers temptation, sometimes loops back
         const totalMoves = Math.abs(this.playerPos.x) + Math.abs(this.playerPos.y);
 
-        if (totalMoves > 0 && totalMoves % 3 === 0 && this.currentTemptation < PHASE_DATA.phase6.temptations.length) {
-            this.currentTemptation++;
+        // Every 2-4 random moves (unpredictable)
+        const triggerPoint = 2 + Math.floor(Math.random() * 3);
+
+        if (totalMoves > 0 && totalMoves % triggerPoint === 0) {
             if (this.currentTemptation < PHASE_DATA.phase6.temptations.length) {
                 await this.presentTemptation(this.currentTemptation);
+                this.currentTemptation++;
             } else {
-                // Chegou ao "fim" mas não há saída
+                // No exit - must ask for help
                 await this.showNoExit();
             }
         }
@@ -203,58 +206,123 @@ export class Phase6_Temptation extends BasePhase {
 
         const temptation = PHASE_DATA.phase6.temptations[index];
 
-        // Voz da tentação
+        // First voice (the lie)
         await this.delay(800);
         await UI.showText(temptation.voice, null, 0.5);
 
-        // SFX de sussurro (usar wrong-sfx como placeholder)
+        // Whisper SFX
         try {
             this.audio.playSFX('wrong-sfx', { volume: 0.3, rate: 0.7 });
         } catch (error) {
             console.warn('SFX wrong não disponível');
         }
 
-        await this.delay(3000);
+        await this.delay(2500);
+        if (this.isDestroyed) return;
+        await UI.hideText(0.3);
+        await this.delay(800);
+
+        // Second voice (the "truth" - but not always helpful)
+        await UI.showText(temptation.truth, null, 0.5);
+        await this.delay(2500);
         if (this.isDestroyed) return;
         await UI.hideText(0.3);
         await this.delay(1000);
 
-        // Verdade (luz no chão - versículo)
-        this.showTruthPath(temptation);
+        // Show choice buttons - player must decide which voice to follow
+        this.showVoiceChoice(temptation);
     }
 
-    showTruthPath(temptation) {
-        // Mostrar versículo como "luz" guia
-        const truthEl = document.createElement('div');
-        truthEl.className = 'truth-verse';
-        truthEl.textContent = temptation.truth;
-        truthEl.style.cssText = `
+    showVoiceChoice(temptation) {
+        const container = document.createElement('div');
+        container.className = 'voice-choice-container';
+        container.style.cssText = `
             position: fixed;
-            top: 100px;
+            bottom: 120px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 15px 30px;
-            background: rgba(212, 175, 55, 0.2);
-            border: 1px solid rgba(212, 175, 55, 0.5);
-            border-radius: 10px;
-            color: #d4af37;
-            font-size: 16px;
-            font-style: italic;
-            max-width: 500px;
-            text-align: center;
-            z-index: 99;
-            opacity: 0.7;
-            pointer-events: none;
+            display: flex;
+            gap: 20px;
+            z-index: 100;
         `;
 
-        document.body.appendChild(truthEl);
+        // Button to follow first voice (the lie)
+        const lieBtn = document.createElement('button');
+        lieBtn.textContent = 'Seguir primeira voz';
+        lieBtn.style.cssText = `
+            padding: 15px 30px;
+            background: rgba(139, 0, 0, 0.6);
+            border: 2px solid rgba(139, 0, 0, 0.8);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        `;
 
-        // Remover após alguns segundos
-        this.setTimeout(() => {
-            if (truthEl.parentNode) {
-                truthEl.remove();
-            }
-        }, 5000);
+        lieBtn.addEventListener('mouseenter', () => {
+            lieBtn.style.background = 'rgba(139, 0, 0, 0.8)';
+        });
+        lieBtn.addEventListener('mouseleave', () => {
+            lieBtn.style.background = 'rgba(139, 0, 0, 0.6)';
+        });
+        lieBtn.addEventListener('click', () => {
+            container.remove();
+            this.handleVoiceChoice(temptation, true);
+        });
+
+        // Button to follow second voice (the "truth")
+        const truthBtn = document.createElement('button');
+        truthBtn.textContent = 'Seguir segunda voz';
+        truthBtn.style.cssText = `
+            padding: 15px 30px;
+            background: rgba(45, 95, 45, 0.6);
+            border: 2px solid rgba(45, 95, 45, 0.8);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        `;
+
+        truthBtn.addEventListener('mouseenter', () => {
+            truthBtn.style.background = 'rgba(45, 95, 45, 0.8)';
+        });
+        truthBtn.addEventListener('mouseleave', () => {
+            truthBtn.style.background = 'rgba(45, 95, 45, 0.6)';
+        });
+        truthBtn.addEventListener('click', () => {
+            container.remove();
+            this.handleVoiceChoice(temptation, false);
+        });
+
+        container.appendChild(lieBtn);
+        container.appendChild(truthBtn);
+        document.body.appendChild(container);
+    }
+
+    async handleVoiceChoice(temptation, followedLie) {
+        if (this.isDestroyed) return;
+
+        const progressMade = (followedLie && temptation.leadsToProgress) ||
+                            (!followedLie && !temptation.leadsToProgress);
+
+        if (progressMade) {
+            // Correct choice - advance
+            await UI.showText("O caminho se abre.", null, 0.3);
+            await this.delay(1500);
+            await UI.hideText(0.2);
+        } else {
+            // Wrong choice - loop back
+            await UI.showText("Você já esteve aqui antes.", null, 0.3);
+            await this.delay(1500);
+            await UI.hideText(0.2);
+
+            // Reset player position slightly (creates confusion)
+            this.playerPos.x = Math.max(0, this.playerPos.x - 1);
+            this.playerPos.y = Math.max(0, this.playerPos.y - 1);
+            this.updateMazeDisplay({ x: this.playerPos.x + 1, y: this.playerPos.y + 1 });
+        }
     }
 
     async showNoExit() {
@@ -473,8 +541,8 @@ export class Phase6_Temptation extends BasePhase {
         const helpBtn = document.getElementById('help-button');
         if (helpBtn) helpBtn.remove();
 
-        const truths = document.querySelectorAll('.truth-verse');
-        truths.forEach(t => t.remove());
+        const voiceChoices = document.querySelectorAll('.voice-choice-container');
+        voiceChoices.forEach(v => v.remove());
 
         // Limpar partículas
         this.particles.forEach(p => {

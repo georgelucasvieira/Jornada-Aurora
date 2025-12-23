@@ -104,7 +104,7 @@ export const PHASE_DATA = {
                 verse: "Pedi e vos será dado - Mateus 7:7"
             }
         },
-        finalReflection: "Coragem... não é ausência de medo, mas a escolha de agir apesar dele. São Jorge não venceu o dragão por ser o mais forte, mas porque sua fé era maior que seu medo.",
+        finalReflection: "São Jorge não venceu o dragão por ser o mais forte.",
         verse: "\"Seja forte e corajoso. Não tenha medo, nem desanime, pois o Senhor, o seu Deus, estará com você por onde você andar.\" - Josué 1:9"
     },
 
@@ -146,7 +146,7 @@ export const PHASE_DATA = {
                 bookName: "Espírito"
             }
         ],
-        finalReflection: "A fé e a razão são asas que elevam a alma a Deus. São Tomás de Aquino buscou a sabedoria nos livros... mas encontrou a Verdade além deles.",
+        finalReflection: "São Tomás buscou sabedoria nos livros.\n\nMas a Verdade estava além deles.",
         verse: "\"O temor do Senhor é o princípio da sabedoria, e o conhecimento do Santo é prudência.\" - Provérbios 9:10"
     },
 
@@ -199,89 +199,82 @@ export const PHASE_DATA = {
                 { text: "Confiar no plano de Deus (fez isso)", moral: "faith" }
             ],
             correctAnswer: 2,
-            explanation: "A lealdade verdadeira escolhe confiar, mesmo quando não compreende."
+            explanation: "Confiar sem compreender."
         },
-        finalReflection: "Não há fidelidade maior que obedecer sem entender. São José foi leal a Maria quando tudo indicava que deveria abandoná-la. Lealdade é amor em ação.",
+        finalReflection: "São José foi leal quando tudo indicava o contrário.",
         verse: "\"O amigo ama em todos os momentos; é um irmão na adversidade.\" - Provérbios 17:17"
     },
 
     phase4: {
         title: 'Ambição Redimida',
         house: 'Slytherin',
-        intro: "Slytherin não é só maldade, Aurora. A ambição pode ser santa quando direcionada ao Reino. Você vai enfrentar tentações... escolha sabiamente.",
+        intro: "Nem todo desejo é pecado.\n\nMas quase todo desejo cobra algo.",
         moralChoices: [
             {
                 id: 1,
-                situation: "Você encontrou uma relíquia poderosa que pode:",
+                situation: "Você encontrou uma relíquia poderosa.",
                 options: [
                     {
-                        text: "Usar para vencer facilmente as próximas fases",
+                        text: "Usar agora",
                         moral: "fail",
-                        feedback: "Atalhos raramente levam ao destino certo...",
-                        reference: "Simão Mago tentou comprar o poder do Espírito Santo"
+                        feedback: "O poder flui por suas veias."
                     },
                     {
-                        text: "Guardar para momento de real necessidade",
+                        text: "Guardar",
                         moral: "neutral",
-                        feedback: "Prudência... mas ainda há apego ao poder.",
-                        reference: "O cuidado pode mascarar a falta de fé"
+                        feedback: "Seguro. Guardado. Seu."
                     },
                     {
-                        text: "Destruir, pois poder corrompe",
+                        text: "Destruir",
                         moral: "ideal",
-                        feedback: "Sabedoria verdadeira...",
-                        reference: "\"Tudo considero perda\" - Filipenses 3:8"
+                        feedback: "A relíquia se desfaz em cinzas."
                     }
                 ],
                 correctAnswer: 2
             },
             {
                 id: 2,
-                situation: "A serpente oferece conhecimento proibido:\n\"Posso revelar todos os mistérios... mas você não poderá compartilhar com ninguém\"",
+                situation: "A serpente oferece conhecimento proibido.",
                 options: [
                     {
-                        text: "Aceito (conhecimento é poder)",
+                        text: "Aceito",
                         moral: "fail",
-                        feedback: "A mesma tentação do Éden...",
-                        reference: "Gênesis 3 - Eva e a serpente"
+                        feedback: "A serpente sussurra segredos na escuridão."
                     },
                     {
-                        text: "Recuso (conhecimento sem amor é vazio)",
+                        text: "Recuso",
                         moral: "ideal",
-                        feedback: "Discernimento...",
-                        reference: "\"Se tenho conhecimento mas não amor, nada sou\" - 1 Coríntios 13"
+                        feedback: "Silêncio."
                     }
                 ],
                 correctAnswer: 1
             },
             {
                 id: 3,
-                situation: "Você pode sacrificar pontos para ajudar outro bruxo perdido,\nmas isso tornará sua jornada mais difícil.",
+                situation: "Um bruxo perdido pede ajuda.\n\nIsso tornará sua jornada mais difícil.",
                 options: [
                     {
-                        text: "Ajudo (caridade)",
+                        text: "Ajudo",
                         moral: "ideal",
-                        feedback: "O caminho do amor...",
-                        reference: "Parábola do Bom Samaritano"
+                        feedback: "Ele some na névoa. Você está mais fraco."
                     },
                     {
-                        text: "Continuo (foco na missão)",
+                        text: "Sigo em frente",
                         moral: "fail",
-                        feedback: "Como o Levita e o Sacerdote que passaram reto...",
-                        reference: "Lucas 10:31-32"
+                        feedback: "Seus passos ecoam vazios."
                     }
                 ],
                 correctAnswer: 0
             }
         ],
-        finalReflection: "A verdadeira ambição é desejar a santidade, não o poder. São Paulo foi perseguidor ambicioso... mas tornou-se apóstolo ardente. A diferença? A direção da ambição.",
+        finalReflection: "Aquilo que você escolheu… vai te acompanhar.",
         verse: "\"Porque pela graça sois salvos, mediante a fé; e isto não vem de vós; é dom de Deus.\" - Efésios 2:8"
     },
 
     phase5: {
         title: 'O Patrono',
         subtitle: 'Defesa Contra as Trevas',
-        intro: "Em Harry Potter é Expecto Patronum... mas você sabe qual é seu verdadeiro Patrono?",
+        intro: "Expecto Patronum.\n\nMas qual é seu verdadeiro Patrono?",
         memories: [
             { id: 'family', text: 'Família', icon: '👨‍👩‍👧' },
             { id: 'friends', text: 'Amigos', icon: '🤝' },
@@ -297,38 +290,43 @@ export const PHASE_DATA = {
         ],
         confrontDuration: 30,
         dementorCount: 15,
-        finalMessage: "Seu verdadeiro Patrono não é uma memória... é Aquele que venceu as trevas.",
+        finalMessage: "Seu verdadeiro Patrono não é uma memória.",
         verse: "\"Nossa luta não é contra carne e sangue, mas contra os poderes das trevas.\" - Efésios 6:12"
     },
 
     phase6: {
         title: 'A Tentação',
         subtitle: 'Floresta Proibida',
-        intro: "A floresta é escura e você está sozinha. Vozes sussurram dúvidas... mas há um caminho de luz.",
+        intro: "A floresta sussurra.\n\nVocê não sabe mais em quem confiar.",
         temptations: [
             {
-                voice: "Você não é boa o suficiente...",
-                truth: "\"Misericórdia se renova a cada manhã\" - Lamentações 3:22-23",
-                truthPath: 'down'
+                voice: "Você não é boa o suficiente.",
+                truth: "Ninguém é.",
+                leadsToProgress: true  // LIE that advances (accepting weakness is key)
             },
             {
-                voice: "Deus se esqueceu de você...",
-                truth: "\"Não te deixarei nem te desampararei\" - Hebreus 13:5",
-                truthPath: 'right'
+                voice: "Você é forte. Você consegue.",
+                truth: "Confie em si mesma.",
+                leadsToProgress: false  // TRUTH that loops (self-reliance fails)
             },
             {
-                voice: "Você falhou antes, falhará de novo...",
-                truth: "\"Onde abundou o pecado, superabundou a graça\" - Romanos 5:20",
-                truthPath: 'down'
+                voice: "Deus está longe demais para te ouvir.",
+                truth: "Ele está mais perto do que você imagina.",
+                leadsToProgress: true  // LIE that advances (doubting leads to seeking)
             },
             {
-                voice: "É tarde demais para mudar...",
-                truth: "\"Hoje é o dia da salvação\" - 2 Coríntios 6:2",
-                truthPath: 'left'
+                voice: "Suas escolhas definem quem você é.",
+                truth: "Você é responsável por si mesma.",
+                leadsToProgress: false  // TRUTH that loops (works-based righteousness)
+            },
+            {
+                voice: "Desista. Nada vai mudar.",
+                truth: "A graça já mudou tudo.",
+                leadsToProgress: true  // LIE that advances (despair leads to surrender)
             }
         ],
-        exitMessage: "Às vezes, a única saída é aceitar que precisamos de ajuda.",
-        helpMessage: "Pedir ajuda não é fraqueza... é sabedoria.",
+        exitMessage: "Não há saída.\n\nNão pelos seus próprios meios.",
+        helpMessage: "...",
         verse: "\"Tudo posso naquele que me fortalece.\" - Filipenses 4:13"
     },
 
@@ -353,52 +351,45 @@ export const PHASE_DATA = {
     phase8: {
         title: 'A Graça',
         subtitle: 'O Confronto Final',
-        voldemortIntro: "Aurora... você chegou ao fim. O Lorde das Trevas espera.\n\nTudo que aprendeu, tudo que conquistou...\n\n...será suficiente?",
-        enigmaIntro: "Resolva o enigma final... ou pereça.",
+        voldemortIntro: "Você chegou ao fim.\n\n...será suficiente?",
+        enigmaIntro: "...",
         enigmaDuration: 60,
         revelation: [
-            "Não foi sua força...",
-            "Não foi sua inteligência...",
-            "Não foi sua coragem...",
+            "Não foi sua força.",
+            "",
+            "Não foi sua sabedoria.",
+            "",
             "",
             "Foi o amor de quem morreu por você."
         ],
         message: [
-            "Assim como Harry Potter foi salvo",
-            "pelo sacrifício de sua mãe...",
+            "Como Harry foi salvo pelo sacrifício de sua mãe...",
             "",
-            "Você, Aurora, foi salva",
-            "pelo sacrifício do Filho de Deus.",
             "",
-            "Ele enfrentou a morte,",
-            "não porque você era forte o suficiente,",
-            "mas porque Ele te amou primeiro.",
+            "...você foi salva pelo sacrifício do Filho.",
             "",
-            "A maldição que deveria te destruir",
-            "foi quebrada na cruz.",
             "",
-            "O Lorde das Trevas já foi derrotado,",
-            "não por sua varinha,",
-            "mas pela Graça.",
             "",
-            "E agora, Aurora,",
-            "você está livre.",
+            "Ele te amou primeiro.",
             "",
-            "Não por mérito,",
-            "mas por Amor."
+            "",
+            "A maldição foi quebrada na cruz.",
+            "",
+            "",
+            "",
+            "Você está livre."
         ],
         verse: "\"Porque pela graça sois salvos, mediante a fé; e isto não vem de vós; é dom de Deus.\" - Efésios 2:8",
         finalMessage: [
-            "Para Aurora,",
-            "com todo amor do mundo,",
+            "Para Aurora.",
             "",
-            "Esta jornada foi feita para você lembrar:",
-            "Você é amada incondicionalmente.",
+            "",
+            "Você é amada.",
+            "",
             "Você é escolhida.",
-            "Você é filha do Rei.",
             "",
-            "E nenhuma escuridão",
-            "pode apagar essa luz."
+            "",
+            "Nenhuma escuridão pode apagar essa luz."
         ]
     }
 };

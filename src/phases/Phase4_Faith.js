@@ -164,30 +164,39 @@ export class Phase4_Faith extends BasePhase {
             container.remove();
         }
 
-        // Salvar escolha
+        // Salvar escolha E consequências no GameState
         this.userChoices.push({
             choiceId: choice.id,
             selectedIndex,
             moral: option.moral
         });
 
+        // Salvar consequências que afetarão fases futuras
+        if (choice.id === 1) {
+            // Relíquia
+            if (selectedIndex === 0) this.state.consequences.relicUsed = true;
+            if (selectedIndex === 1) this.state.consequences.relicKept = true;
+            if (selectedIndex === 2) this.state.consequences.relicDestroyed = true;
+        } else if (choice.id === 2) {
+            // Conhecimento
+            if (selectedIndex === 0) this.state.consequences.acceptedKnowledge = true;
+        } else if (choice.id === 3) {
+            // Ajudar estranho
+            if (selectedIndex === 0) this.state.consequences.helpedStranger = true;
+        }
+
+        this.state.save();
+
         await UI.hideText(0.3);
         await this.delay(500);
         if (this.isDestroyed) return;
 
-        // Feedback da escolha
+        // Feedback MUITO mais curto e ambíguo
         await UI.showText(option.feedback, null, 0.5);
-        await this.delay(2500);
+        await this.delay(2000);
         if (this.isDestroyed) return;
         await UI.hideText(0.3);
-        await this.delay(500);
-
-        // Mostrar referência bíblica
-        await UI.showText(option.reference, null, 0.5);
-        await this.delay(3000);
-        if (this.isDestroyed) return;
-        await UI.hideText(0.3);
-        await this.delay(800);
+        await this.delay(1000);
 
         // Efeitos visuais baseados na escolha
         if (option.moral === 'ideal') {

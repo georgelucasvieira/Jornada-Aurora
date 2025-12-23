@@ -1,454 +1,303 @@
 import * as THREE from 'three';
 import { BasePhase } from './BasePhase.js';
 import { UI } from '../utils/UI.js';
-import { PHASE_DATA } from '../config/assets.js';
 
 export class Phase7_Darkness extends BasePhase {
     constructor(sceneManager, audioManager, gameState) {
         super(sceneManager, audioManager, gameState);
 
-        this.attempts = 0;
-        this.timeElapsed = 0;
-        this.timerInterval = null;
-        this.currentHint = 0;
-        this.lightLevel = 1.0;
         this.particles = [];
+        this.disintegrationLevel = 0;
+        this.glitchInterval = null;
 
-        // Iniciar música (usa courage-music como fallback)
+        // Música tensa
         const music = this.audio.playMusic('darkness-music', { fadeIn: 2000 });
         if (music) {
-            // Reduzir volume para atmosfera tensa
-            music.volume(0.4);
+            music.volume(0.3);
         } else {
-            console.warn('Música darkness não disponível, usando courage-music');
             const fallback = this.audio.playMusic('courage-music', { fadeIn: 2000 });
-            if (fallback) fallback.volume(0.4);
+            if (fallback) fallback.volume(0.3);
         }
     }
 
     async init() {
-        console.log('Iniciando Fase 7: A Escuridão (O Enigma Impossível)');
+        console.log('Iniciando Fase 7: A Escuridão (Desintegração)');
 
         // Background quase preto
         this.scene.setBackgroundColor('#000000');
 
-        // Criar cena
-        await this.setupScene();
+        // Luz mínima
+        const ambientLight = new THREE.AmbientLight(0x0a0a0a, 0.15);
+        this.scene.scene.add(ambientLight);
+        this.scene.currentObjects.push(ambientLight);
 
-        // Introdução
-        await this.intro();
-
-        // Mostrar puzzle
-        await this.showPuzzle();
+        // Sem intro, direto para a desintegração
+        await this.delay(2000);
+        await this.startDisintegration();
     }
 
-    async setupScene() {
-        // Luz MUITO fraca
-        this.ambientLight = new THREE.AmbientLight(0x1a1a1a, 0.2);
-        this.scene.scene.add(this.ambientLight);
-        this.scene.currentObjects.push(this.ambientLight);
-
-        // Sombras nas bordas (esferas escuras)
-        for (let i = 0; i < 20; i++) {
-            const geometry = new THREE.SphereGeometry(0.5, 16, 16);
-            const material = new THREE.MeshBasicMaterial({
-                color: 0x000000,
-                transparent: true,
-                opacity: 0
-            });
-            const shadow = new THREE.Mesh(geometry, material);
-
-            const angle = (i / 20) * Math.PI * 2;
-            const radius = 3 + Math.random() * 2;
-            shadow.position.set(
-                Math.cos(angle) * radius,
-                (Math.random() - 0.5) * 2,
-                Math.sin(angle) * radius - 5
-            );
-
-            this.scene.scene.add(shadow);
-            this.scene.currentObjects.push(shadow);
-
-            // Sombras se aproximam com o tempo
-            this.gsapTo(shadow.material, {
-                opacity: 0.8,
-                duration: 60,
-                ease: 'power1.in'
-            });
-
-            this.gsapTo(shadow.position, {
-                x: shadow.position.x * 0.3,
-                z: shadow.position.z + 2,
-                duration: 60,
-                ease: 'power1.in'
-            });
-        }
-    }
-
-    async intro() {
+    async startDisintegration() {
         if (this.isDestroyed) return;
 
-        await UI.showText(PHASE_DATA.phase7.intro, null, 0.5);
-        await this.delay(5000);
-        if (this.isDestroyed) return;
+        // Mensagem inicial (sem Chapéu)
+        await UI.showText("Três relíquias, três virtudes, três escolhas.", null, 0.5);
+        await this.delay(3000);
         await UI.hideText(0.3);
-        await this.delay(1500);
+        await this.delay(1000);
+
+        // Criar "botões" que vão quebrar
+        this.createBreakingUI();
+
+        // Iniciar processo de desintegração gradual
+        this.startGlitching();
     }
 
-    async showPuzzle() {
-        if (this.isDestroyed) return;
-
-        // Mostrar enigma
-        await UI.showText(PHASE_DATA.phase7.puzzle.question, null, 0.5);
-        await this.delay(8000);
-        if (this.isDestroyed) return;
-
-        // Criar UI do puzzle
-        this.createPuzzleUI();
-        this.startTimer();
-        this.startDarkeningEffect();
-    }
-
-    createPuzzleUI() {
+    createBreakingUI() {
         const container = document.createElement('div');
-        container.id = 'puzzle-container';
+        container.id = 'breaking-ui';
         container.style.cssText = `
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(10, 10, 10, 0.95);
-            border: 2px solid #660000;
-            border-radius: 15px;
-            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
             z-index: 100;
-            max-width: 500px;
         `;
 
-        // Título
-        const title = document.createElement('div');
-        title.textContent = 'Digite o código de 4 dígitos:';
-        title.style.cssText = `
-            color: #cc0000;
-            font-size: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-        `;
-        container.appendChild(title);
+        // "Botões" falsos
+        const actions = ['Resolver', 'Continuar', 'Avançar'];
 
-        // Input de código
-        const input = document.createElement('input');
-        input.id = 'code-input';
-        input.type = 'text';
-        input.maxLength = 4;
-        input.placeholder = '0000';
-        input.style.cssText = `
-            width: 100%;
-            padding: 15px;
-            font-size: 30px;
-            text-align: center;
-            background: #1a1a1a;
-            color: #cc0000;
-            border: 2px solid #660000;
-            border-radius: 10px;
-            font-family: monospace;
-            letter-spacing: 10px;
-        `;
-        container.appendChild(input);
+        actions.forEach((text, index) => {
+            const btn = document.createElement('button');
+            btn.textContent = text;
+            btn.className = 'glitch-button';
+            btn.style.cssText = `
+                padding: 20px 60px;
+                background: rgba(100, 0, 0, 0.5);
+                border: 2px solid #660000;
+                color: #cc0000;
+                font-size: 20px;
+                cursor: pointer;
+                border-radius: 8px;
+                transition: all 0.3s;
+            `;
 
-        // Botão verificar
-        const checkBtn = document.createElement('button');
-        checkBtn.textContent = 'Verificar';
-        checkBtn.style.cssText = `
-            width: 100%;
-            margin-top: 20px;
-            padding: 15px;
-            background: #660000;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        `;
+            btn.addEventListener('click', () => {
+                // Não faz nada, ou faz algo errado
+                btn.style.opacity = '0.3';
+                this.disintegrationLevel++;
+            });
 
-        checkBtn.addEventListener('mouseenter', () => {
-            checkBtn.style.background = '#990000';
+            container.appendChild(btn);
         });
-
-        checkBtn.addEventListener('mouseleave', () => {
-            checkBtn.style.background = '#660000';
-        });
-
-        checkBtn.addEventListener('click', () => {
-            this.checkAnswer(input.value);
-        });
-
-        container.appendChild(checkBtn);
-
-        // Contador de tentativas
-        const attemptsEl = document.createElement('div');
-        attemptsEl.id = 'attempts-counter';
-        attemptsEl.textContent = `Tentativas: ${this.attempts}`;
-        attemptsEl.style.cssText = `
-            margin-top: 20px;
-            color: #cc0000;
-            text-align: center;
-            font-size: 14px;
-        `;
-        container.appendChild(attemptsEl);
 
         document.body.appendChild(container);
-
-        // Focus no input
-        input.focus();
-
-        // Enter para verificar
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                this.checkAnswer(input.value);
-            }
-        });
     }
 
-    startTimer() {
-        const timerEl = document.createElement('div');
-        timerEl.id = 'darkness-timer';
-        timerEl.textContent = '5:00';
-        timerEl.style.cssText = `
-            position: fixed;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 40px;
-            color: #cc0000;
-            font-weight: bold;
-            z-index: 100;
-            text-shadow: 0 0 10px rgba(204, 0, 0, 0.8);
-        `;
+    startGlitching() {
+        let phase = 0;
 
-        document.body.appendChild(timerEl);
-
-        this.timerInterval = setInterval(() => {
+        this.glitchInterval = setInterval(() => {
             if (this.isDestroyed) {
-                clearInterval(this.timerInterval);
-                timerEl.remove();
+                clearInterval(this.glitchInterval);
                 return;
             }
 
-            this.timeElapsed++;
-            const remaining = PHASE_DATA.phase7.timeLimit - this.timeElapsed;
+            phase++;
 
-            if (remaining <= 0) {
-                clearInterval(this.timerInterval);
-                timerEl.remove();
-                this.showGiveUpOption();
-            } else {
-                const minutes = Math.floor(remaining / 60);
-                const seconds = remaining % 60;
-                timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-                // Piscar quando < 30s
-                if (remaining < 30 && remaining % 2 === 0) {
-                    timerEl.style.color = '#ff0000';
-                } else {
-                    timerEl.style.color = '#cc0000';
-                }
+            // Fase 1 (5s): Texto começa a falhar
+            if (phase === 5) {
+                this.glitchText();
             }
+
+            // Fase 2 (10s): Botões param de responder
+            if (phase === 10) {
+                this.breakButtons();
+            }
+
+            // Fase 3 (15s): Som corta
+            if (phase === 15) {
+                this.audio.stopMusic(500);
+            }
+
+            // Fase 4 (20s): UI desaparece
+            if (phase === 20) {
+                this.breakUI();
+            }
+
+            // Fase 5 (25s): Tela trava
+            if (phase === 25) {
+                this.freezeScreen();
+            }
+
+            // Fase 6 (30s): Silêncio total
+            if (phase === 30) {
+                clearInterval(this.glitchInterval);
+                this.totalSilence();
+            }
+
         }, 1000);
     }
 
-    startDarkeningEffect() {
-        // A cada 30s, escurece mais
-        const darkenInterval = setInterval(() => {
-            if (this.isDestroyed) {
-                clearInterval(darkenInterval);
-                return;
-            }
+    glitchText() {
+        const textEl = document.querySelector('#ui-text');
+        if (textEl) {
+            // Texto quebrado
+            let originalText = textEl.textContent;
+            let glitched = originalText.split('').map(char =>
+                Math.random() > 0.7 ? '█' : char
+            ).join('');
 
-            this.lightLevel -= 0.05;
-            if (this.lightLevel < 0.1) this.lightLevel = 0.1;
+            textEl.textContent = glitched;
 
-            if (this.ambientLight) {
-                this.gsapTo(this.ambientLight, {
-                    intensity: this.lightLevel * 0.2,
-                    duration: 5
-                });
-            }
-
-            // Mostrar hint
-            if (this.currentHint < PHASE_DATA.phase7.puzzle.hints.length) {
-                this.showHint(PHASE_DATA.phase7.puzzle.hints[this.currentHint]);
-                this.currentHint++;
-            }
-        }, 30000);
-    }
-
-    async showHint(hint) {
-        if (this.isDestroyed) return;
-
-        const currentText = UI.getCurrentText();
-        await UI.hideText(0.3);
-        await this.delay(500);
-
-        await UI.showText(hint, null, 0.5);
-        await this.delay(3000);
-        await UI.hideText(0.3);
-        await this.delay(500);
-
-        if (currentText) {
-            await UI.showText(currentText, null, 0.3);
+            this.setTimeout(() => {
+                textEl.textContent = originalText;
+            }, 200);
         }
     }
 
-    async checkAnswer(code) {
-        if (this.isDestroyed) return;
+    breakButtons() {
+        const buttons = document.querySelectorAll('.glitch-button');
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            btn.style.opacity = '0.2';
+            btn.style.cursor = 'not-allowed';
+            btn.style.pointerEvents = 'none';
 
-        this.attempts++;
+            // Texto quebra
+            this.setInterval(() => {
+                if (this.isDestroyed) return;
+                const chars = btn.textContent.split('');
+                chars[Math.floor(Math.random() * chars.length)] = '█';
+                btn.textContent = chars.join('');
+            }, 500);
+        });
+    }
 
-        // Atualizar contador
-        const attemptsEl = document.getElementById('attempts-counter');
-        if (attemptsEl) {
-            attemptsEl.textContent = `Tentativas: ${this.attempts}`;
-        }
-
-        // SFX de erro (sempre errado!)
-        try {
-            this.audio.playSFX('wrong-sfx');
-        } catch (error) {
-            console.warn('SFX wrong não disponível');
-        }
-
-        // Shake no container
-        const container = document.getElementById('puzzle-container');
+    breakUI() {
+        const container = document.getElementById('breaking-ui');
         if (container) {
+            // UI falha visualmente
             this.gsapTo(container, {
-                x: 10,
-                duration: 0.1,
-                yoyo: true,
-                repeat: 5,
-                onComplete: () => {
-                    container.style.transform = 'translate(-50%, -50%)';
-                }
+                opacity: 0,
+                y: 100,
+                duration: 2,
+                ease: 'power2.in',
+                onComplete: () => container.remove()
             });
         }
 
-        // Limpar input
-        const input = document.getElementById('code-input');
-        if (input) {
-            input.value = '';
-            input.focus();
-        }
-
-        // Após 10 tentativas, mostrar opção de desistir
-        if (this.attempts >= 10) {
-            this.showGiveUpOption();
-        }
+        // Mensagem quebrada aparece
+        UI.showText("S█s ██rças ███ █ão ██fi█ie███s", null, 0.5);
     }
 
-    showGiveUpOption() {
-        // Verificar se já existe
-        if (document.getElementById('give-up-btn')) return;
+    freezeScreen() {
+        // Tela "congela" - só background escuro
+        UI.hideText(0);
 
-        const giveUpBtn = document.createElement('button');
-        giveUpBtn.id = 'give-up-btn';
-        giveUpBtn.textContent = 'Desistir';
-        giveUpBtn.style.cssText = `
+        document.body.style.cursor = 'wait';
+
+        // Nada responde por 5s
+        this.setTimeout(() => {
+            document.body.style.cursor = 'default';
+        }, 5000);
+    }
+
+    async totalSilence() {
+        if (this.isDestroyed) return;
+
+        // SILÊNCIO ABSOLUTO
+        UI.hideText(0);
+
+        // Tela completamente preta
+        this.scene.setBackgroundColor('#000000');
+
+        await this.delay(5000);
+
+        // Depois do silêncio: uma única opção
+        await this.showStayOption();
+    }
+
+    async showStayOption() {
+        if (this.isDestroyed) return;
+
+        // Botão simples: "Ficar"
+        const stayBtn = document.createElement('button');
+        stayBtn.id = 'stay-button';
+        stayBtn.textContent = 'Ficar';
+        stayBtn.style.cssText = `
             position: fixed;
-            bottom: 50px;
-            right: 50px;
-            padding: 10px 20px;
-            background: rgba(102, 0, 0, 0.5);
-            color: #cc0000;
-            border: 1px solid #660000;
-            border-radius: 8px;
-            font-size: 14px;
+            bottom: 50%;
+            left: 50%;
+            transform: translate(-50%, 50%);
+            padding: 20px 60px;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 18px;
             cursor: pointer;
+            border-radius: 8px;
             z-index: 101;
-            transition: all 0.3s;
-            opacity: 0.5;
         `;
 
-        giveUpBtn.addEventListener('mouseenter', () => {
-            giveUpBtn.style.opacity = '1';
-            giveUpBtn.style.background = 'rgba(102, 0, 0, 0.8)';
+        stayBtn.addEventListener('click', async () => {
+            stayBtn.remove();
+            await this.stayed();
         });
 
-        giveUpBtn.addEventListener('mouseleave', () => {
-            giveUpBtn.style.opacity = '0.5';
-            giveUpBtn.style.background = 'rgba(102, 0, 0, 0.5)';
-        });
-
-        giveUpBtn.addEventListener('click', async () => {
-            await this.giveUp();
-        });
-
-        document.body.appendChild(giveUpBtn);
+        document.body.appendChild(stayBtn);
     }
 
-    async giveUp() {
+    async stayed() {
         if (this.isDestroyed) return;
 
-        // Limpar timer
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-        }
+        // Nada acontece imediatamente
+        await this.delay(3000);
 
-        // Remover UI
-        const container = document.getElementById('puzzle-container');
-        if (container) container.remove();
+        // Depois de um tempo, uma luz muito fraca
+        const light = new THREE.PointLight(0xffffff, 0, 10);
+        light.position.set(0, 0, -3);
+        this.scene.scene.add(light);
+        this.scene.currentObjects.push(light);
 
-        const timer = document.getElementById('darkness-timer');
-        if (timer) timer.remove();
+        this.gsapTo(light, {
+            intensity: 0.1,
+            duration: 5
+        });
 
-        const giveUpBtn = document.getElementById('give-up-btn');
-        if (giveUpBtn) giveUpBtn.remove();
+        await this.delay(5000);
 
-        await UI.hideText(0.3);
-        await this.delay(1000);
-
-        // Mensagem de reconhecimento de limitação
-        await UI.showText(PHASE_DATA.phase7.giveUpMessage, null, 0.5);
+        // Versículo - SEM explicação
+        await UI.showText("Permanecei em mim.", null, 0.5);
         await this.delay(4000);
-        if (this.isDestroyed) return;
         await UI.hideText(0.3);
-        await this.delay(1000);
 
-        // Mensagem final
-        await UI.showText(PHASE_DATA.phase7.finalMessage, null, 0.5);
-        await this.delay(4000);
-        if (this.isDestroyed) return;
-        await UI.hideText(0.3);
-        await this.delay(1500);
+        await this.delay(3000);
 
-        // Transição para Fase 8
+        // Completar fase (direto para Fase 8, sem carta)
         await this.complete();
     }
 
     async complete() {
-        console.log('Fase 7 completa (por desistência)');
+        console.log('Fase 7 completa (permaneceu)');
 
         this.scene.stopAnimation();
 
-        // Aumentar luz levemente (preparação para Fase 8)
-        if (this.ambientLight) {
-            this.gsapTo(this.ambientLight, {
-                intensity: 0.3,
-                duration: 2
-            });
+        if (this.glitchInterval) {
+            clearInterval(this.glitchInterval);
         }
 
         await this.delay(2000);
 
         // Salvar progresso
         this.state.completePhase(7, {
-            attempts: this.attempts,
-            gaveUp: true,
+            stayed: true,
             timeCompleted: Date.now()
         });
 
-        // Próxima fase (SEM carta desta vez!)
+        // Transição direta para Fase 8
         this.setTimeout(() => {
             const game = window.game;
             if (game) {
@@ -462,22 +311,18 @@ export class Phase7_Darkness extends BasePhase {
 
         super.destroy();
 
-        // Limpar timer
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
+        if (this.glitchInterval) {
+            clearInterval(this.glitchInterval);
         }
 
-        // Remover UIs
-        const container = document.getElementById('puzzle-container');
-        if (container) container.remove();
+        const breakingUI = document.getElementById('breaking-ui');
+        if (breakingUI) breakingUI.remove();
 
-        const timer = document.getElementById('darkness-timer');
-        if (timer) timer.remove();
+        const stayBtn = document.getElementById('stay-button');
+        if (stayBtn) stayBtn.remove();
 
-        const giveUpBtn = document.getElementById('give-up-btn');
-        if (giveUpBtn) giveUpBtn.remove();
+        document.body.style.cursor = 'default';
 
-        // Limpar partículas
         this.particles.forEach(p => {
             this.scene.scene.remove(p);
             if (p.geometry) p.geometry.dispose();
