@@ -276,5 +276,129 @@ export const PHASE_DATA = {
         ],
         finalReflection: "A verdadeira ambição é desejar a santidade, não o poder. São Paulo foi perseguidor ambicioso... mas tornou-se apóstolo ardente. A diferença? A direção da ambição.",
         verse: "\"Porque pela graça sois salvos, mediante a fé; e isto não vem de vós; é dom de Deus.\" - Efésios 2:8"
+    },
+
+    phase5: {
+        title: 'O Patrono',
+        subtitle: 'Defesa Contra as Trevas',
+        intro: "Em Harry Potter é Expecto Patronum... mas você sabe qual é seu verdadeiro Patrono?",
+        memories: [
+            { id: 'family', text: 'Família', icon: '👨‍👩‍👧' },
+            { id: 'friends', text: 'Amigos', icon: '🤝' },
+            { id: 'achievement', text: 'Conquistas', icon: '🏆' },
+            { id: 'nature', text: 'Natureza', icon: '🌿' },
+            { id: 'prayer', text: 'Oração', icon: '🙏' },
+            { id: 'love', text: 'Amor', icon: '❤️' }
+        ],
+        prayers: [
+            { id: 'paiNosso', text: 'Pai Nosso' },
+            { id: 'aveMaria', text: 'Ave Maria' },
+            { id: 'saoMiguel', text: 'Oração a São Miguel', correct: true }
+        ],
+        confrontDuration: 30,
+        dementorCount: 15,
+        finalMessage: "Seu verdadeiro Patrono não é uma memória... é Aquele que venceu as trevas.",
+        verse: "\"Nossa luta não é contra carne e sangue, mas contra os poderes das trevas.\" - Efésios 6:12"
+    },
+
+    phase6: {
+        title: 'A Tentação',
+        subtitle: 'Floresta Proibida',
+        intro: "A floresta é escura e você está sozinha. Vozes sussurram dúvidas... mas há um caminho de luz.",
+        temptations: [
+            {
+                voice: "Você não é boa o suficiente...",
+                truth: "\"Misericórdia se renova a cada manhã\" - Lamentações 3:22-23",
+                truthPath: 'down'
+            },
+            {
+                voice: "Deus se esqueceu de você...",
+                truth: "\"Não te deixarei nem te desampararei\" - Hebreus 13:5",
+                truthPath: 'right'
+            },
+            {
+                voice: "Você falhou antes, falhará de novo...",
+                truth: "\"Onde abundou o pecado, superabundou a graça\" - Romanos 5:20",
+                truthPath: 'down'
+            },
+            {
+                voice: "É tarde demais para mudar...",
+                truth: "\"Hoje é o dia da salvação\" - 2 Coríntios 6:2",
+                truthPath: 'left'
+            }
+        ],
+        exitMessage: "Às vezes, a única saída é aceitar que precisamos de ajuda.",
+        helpMessage: "Pedir ajuda não é fraqueza... é sabedoria.",
+        verse: "\"Tudo posso naquele que me fortalece.\" - Filipenses 4:13"
+    },
+
+    phase7: {
+        title: 'A Escuridão',
+        subtitle: 'O Enigma Impossível',
+        intro: "Três relíquias, três virtudes, três escolhas.\n\nResolva o enigma... ou pereça.",
+        puzzle: {
+            question: "Fé move montanhas, mas qual montanha?\nEsperança ancora a alma, mas em que porto?\nCaridade cobre pecados, mas quantos?\n\nA soma das letras de cada resposta,\nmultiplicada pelos dias da criação,\ndividida pelas bem-aventuranças,\nrevela o código.",
+            hints: [
+                "A resposta está mais perto do que imagina...",
+                "Nem sempre resolver é vencer...",
+                "Sua força não será suficiente..."
+            ],
+            code: "0000" // Não importa, é impossível
+        },
+        timeLimit: 300, // 5 minutos
+        giveUpMessage: "Reconhecer limitações é sabedoria... mas ainda não é hora.",
+        finalMessage: "Suas forças não são suficientes... mas há Alguém maior."
+    },
+
+    phase8: {
+        title: 'A Graça',
+        subtitle: 'O Confronto Final',
+        voldemortIntro: "Aurora... você chegou ao fim. O Lorde das Trevas espera.\n\nTudo que aprendeu, tudo que conquistou...\n\n...será suficiente?",
+        enigmaIntro: "Resolva o enigma final... ou pereça.",
+        enigmaDuration: 60,
+        revelation: [
+            "Não foi sua força...",
+            "Não foi sua inteligência...",
+            "Não foi sua coragem...",
+            "",
+            "Foi o amor de quem morreu por você."
+        ],
+        message: [
+            "Assim como Harry Potter foi salvo",
+            "pelo sacrifício de sua mãe...",
+            "",
+            "Você, Aurora, foi salva",
+            "pelo sacrifício do Filho de Deus.",
+            "",
+            "Ele enfrentou a morte,",
+            "não porque você era forte o suficiente,",
+            "mas porque Ele te amou primeiro.",
+            "",
+            "A maldição que deveria te destruir",
+            "foi quebrada na cruz.",
+            "",
+            "O Lorde das Trevas já foi derrotado,",
+            "não por sua varinha,",
+            "mas pela Graça.",
+            "",
+            "E agora, Aurora,",
+            "você está livre.",
+            "",
+            "Não por mérito,",
+            "mas por Amor."
+        ],
+        verse: "\"Porque pela graça sois salvos, mediante a fé; e isto não vem de vós; é dom de Deus.\" - Efésios 2:8",
+        finalMessage: [
+            "Para Aurora,",
+            "com todo amor do mundo,",
+            "",
+            "Esta jornada foi feita para você lembrar:",
+            "Você é amada incondicionalmente.",
+            "Você é escolhida.",
+            "Você é filha do Rei.",
+            "",
+            "E nenhuma escuridão",
+            "pode apagar essa luz."
+        ]
     }
 };

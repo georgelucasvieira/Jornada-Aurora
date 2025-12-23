@@ -7,6 +7,10 @@ import { Phase1_Courage } from './phases/Phase1_Courage.js';
 import { Phase2_Wisdom } from './phases/Phase2_Wisdom.js';
 import { Phase3_Loyalty } from './phases/Phase3_Loyalty.js';
 import { Phase4_Faith } from './phases/Phase4_Faith.js';
+import { Phase5_Patronus } from './phases/Phase5_Patronus.js';
+import { Phase6_Temptation } from './phases/Phase6_Temptation.js';
+import { Phase7_Darkness } from './phases/Phase7_Darkness.js';
+import { Phase8_Grace } from './phases/Phase8_Grace.js';
 import { ASSETS } from './config/assets.js';
 
 class Game {
@@ -21,7 +25,11 @@ class Game {
             1: Phase1_Courage,
             2: Phase2_Wisdom,
             3: Phase3_Loyalty,
-            4: Phase4_Faith
+            4: Phase4_Faith,
+            5: Phase5_Patronus,
+            6: Phase6_Temptation,
+            7: Phase7_Darkness,
+            8: Phase8_Grace
         };
 
         // UI Elements
